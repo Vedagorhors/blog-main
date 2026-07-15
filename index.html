@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>react-vite-project</title>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module" src="./src/main.jsx"></script>
+	</body>
+</html>
+
+<!-- была ошибка в строке 11 в пути src="/src/main.jsx".  Я поставил точку
+src="./src/main.jsx"
+Проблема: Ошибка "Base path '' must be an absolute path" возникает из-за того, что в index.html:11 используется абсолютный путь /src/main.jsx, но в vite.config.js не настроен параметр base.
+Решение: Изменить путь в index.html:11 с /src/main.jsx на ./src/main.jsx (относительный путь) -->
