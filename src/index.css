@@ -1,7 +1,11 @@
+/* Так как файл font-awesome.css подключаемого шрифта является обычным css, ни css-modules, ни css-components, то нужно подключить его в глобальный наш css с помощью директивы @import и там в url нужно прописать путь к файлу  font-awesome.css относительно файла index.css. И теперь строку с путем link мы можем удалить в файле index.html*/
+@import url('fonts/font-awesome.css');
+
 body {
 	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	font-family:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+		'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
