@@ -1,6 +1,11 @@
 /* Так как файл font-awesome.css подключаемого шрифта является обычным css, ни css-modules, ни css-components, то нужно подключить его в глобальный наш css с помощью директивы @import и там в url нужно прописать путь к файлу  font-awesome.css относительно файла index.css. И теперь строку с путем link мы можем удалить в файле index.html*/
 @import url('fonts/font-awesome.css');
 
+/* Применим ко всем элементам: box-sizing */
+* {
+	box-sizing: border-box;
+}
+
 body {
 	margin: 0;
 	font-family:
@@ -8,6 +13,20 @@ body {
 		'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	background-color: #405060;
+}
+
+/* сделаем, чтобы вся страница и тело были на все 100%, а то если это не написать, то страница будет на пол экрана */
+html,
+body,
+#root {
+	height: 100%;
+}
+
+/* сразу для всех ссылок (a) для компонентов Link в приложении сделаем общие стили, чтобы для каждого Link их не повторять в коде: */
+a {
+	color: #000;
+	text-decoration: none;
 }
 
 code {
