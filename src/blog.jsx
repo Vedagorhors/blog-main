@@ -1,11 +1,11 @@
 import { Routes, Route } from 'react-router-dom';
-import { Header } from './components';
+import { Header, Footer } from './components';
 import styled from 'styled-components'; // вместо CSS-модулей здесь будем использовать Styled-components, просто для примера, потому что ранее в уроках мы использовали только css-модули
 
 const AppColumn = styled.div`
 	display: flex;
 	flex-direction: column;
-	justify-content: space-bitween;
+	justify-content: space-between;
 	width: 1000px;
 	min-height: 100%;
 	margin: 0 auto;
@@ -22,7 +22,7 @@ const H2 = styled.h2`
 	text-align: center;
 `;
 
-const Footer = () => <div>Футер</div>;
+// const Footer = () => <div>Футер</div>; // делал заглушку сначала
 
 export const Blog = () => {
 	return (
