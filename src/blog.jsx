@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { Header, Footer } from './components';
+import { Authorization } from './pages';
 import styled from 'styled-components'; // вместо CSS-модулей здесь будем использовать Styled-components, просто для примера, потому что ранее в уроках мы использовали только css-модули
 
 const AppColumn = styled.div`
@@ -18,9 +19,9 @@ const Content = styled.div`
 	padding: 120px 0;
 `;
 
-const H2 = styled.h2`
-	text-align: center;
-`;
+// const H2 = styled.h2`
+// 	text-align: center;
+// `; - мы убрали H2
 
 // const Footer = () => <div>Футер</div>; // делал заглушку сначала
 
@@ -29,10 +30,11 @@ export const Blog = () => {
 		<AppColumn>
 			<Header />
 			<Content>
-				<H2>Контент страницы</H2>
+				{/* <H2>Контент страницы</H2> - уже не нужен заголовок. делал просто для наглядности */}
 				<Routes>
 					<Route path="/" element={<div>Главная страница</div>} />
-					<Route path="/login" element={<div>Авторизация</div>} />
+					{/* <Route path="/login" element={<div>Авторизация</div>} /> - это была сначала заглушка, пока мы не создали компонент авторизации Authorization */}
+					<Route path="/login" element={<Authorization />} />
 					<Route path="/register" element={<div>Регистрация</div>} />
 					<Route path="/users" element={<div>Пользователи</div>} />
 					<Route path="/post" element={<div>Новая статья</div>} />

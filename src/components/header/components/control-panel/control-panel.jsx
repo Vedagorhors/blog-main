@@ -1,5 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Icon } from '../../../../components';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, Icon } from '../../../../components';
+import { ROLE } from '../../../../constants';
+import {
+	selectUserRole,
+	selectUserLogin,
+	selectUserSession,
+} from '../../../../selectors';
+import { logout } from '../../../../actions';
 import styled from 'styled-components';
 
 // Так как нам потребуется выравнивать кнопки панели управления по правому краю, то создадим компонент для стилизации
@@ -7,43 +15,74 @@ import styled from 'styled-components';
 const RightAligned = styled.div`
 	display: flex;
 	justify-content: flex-end;
-`;
-
-// здесь const Button = styled.Button тоже меняем styled.button на styled(Link), так как нам теперь нужно стилизовать не кнопку а уже ссылку Link. Вызовем styled и отправим в него Link
-const StyledLink = styled(Link)`
-	display: flex;
-	justify-content: center;
 	align-items: center;
-	font-size: 18px;
-	width: 100px;
-	height: 32px;
-	border: 1px solid #000;
-	background-color: #eee;
+	// пришлось отступить от урока, так как у меня нижние три иконки под кнопкой Войти прыгали и мне пришлось здесь зафиксировать минимальную высоту равной кнопке 32px
+	min-height: 32px;
 `;
 
-const StyledButton = styled.div`
+// здесь const Button = styled.Button тоже меняем styled.button на styled(Link), так как нам теперь нужно стилизовать не кнопку а уже ссылку Link. Вызовем styled и отправим в него
+// Теперь убираем стилизацию кнопки, так как мы сделали для этого отдельный файл button.jsx
+// const StyledLink = styled(Link)`
+// 	display: flex;
+// 	justify-content: center;
+// 	align-items: center;
+// 	font-size: 18px;
+// 	width: 100px;
+// 	height: 32px;
+// 	border: 1px solid #000;
+// 	background-color: #eee;
+// `;
+
+const StyledIcon = styled.div`
 	&:hover {
 		cursor: pointer;
 	}
 `;
 
+const UserName = styled.div`
+	font-size: 18px;
+	font-weight: bold;
+`;
+
 const ControlPanelContainer = ({ className }) => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const roleId = useSelector(selectUserRole);
+	const login = useSelector(selectUserLogin);
+	// сессию также берем из стейта с помощью селектора
+	const session = useSelector(selectUserSession);
 	return (
 		<div className={className}>
 			<RightAligned>
-				{/* Вместо названия Button мы написали потом Link для роутинга */}
-				<StyledLink to="/login">Войти</StyledLink>
+				{/* Если роль у пользователя равна Гость, то мы отображаем кнопку Войти, если не гость, а другая роль, то нужно отобразить какие-то данные для авторизованного пользователя, а конкретно это логин и кнопка Выйти */}
+				{roleId === ROLE.GUEST ? (
+					<Button>
+						<Link to="/login">Войти</Link>
+					</Button>
+				) : (
+					<>
+						{/* в шапке размещаем имя пользователя, иконку, по нажатию на которую будет отправляться экшен, чтобы разлогинить пользователя  */}
+						<UserName>{login}</UserName>
+						<StyledIcon>
+							<Icon
+								id="fa-sign-out"
+								margin="0 0 0 10px"
+								// здесь по нажатию запускаем loguot. В файле app-reducer этот logout отловиться, измениться флаг, а уже изменения флага мы отловим в файле authorization.jsx в subscribe.  Сложная схема, но зато она позволяет передавать данные и реагировать на какие-то изменения просто совершенно разным местам приложения, так как шапка и страница это разные места, два разных компонента, а мы взяли и передали между ними данные
+								onClick={() => dispatch(logout(session))}
+							/>
+						</StyledIcon>
+					</>
+				)}
 			</RightAligned>
 			<RightAligned>
-				<StyledButton onClick={() => navigate(-1)}>
+				<StyledIcon onClick={() => navigate(-1)}>
 					<Icon id="fa-backward" margin="10px 0 0 0" />
-				</StyledButton>
+				</StyledIcon>
 				<Link to="/post">
-					<Icon id="fa-file-text-o" margin="10px 0 0 5px" />
+					<Icon id="fa-file-text-o" margin="10px 0 0 16px" />
 				</Link>
 				<Link to="/users">
-					<Icon id="fa-users" margin="10px 0 0 5px" />
+					<Icon id="fa-users" margin="10px 0 0 16px" />
 				</Link>
 			</RightAligned>
 		</div>
