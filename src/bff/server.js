@@ -44,21 +44,23 @@ export const server = {
 	},
 
 	// Регистрация
+	// Получаем здесь пользователя
 	async register(regLogin, regPassword) {
-		const user = await getUser(regLogin);
+		const existedUser = await getUser(regLogin);
 
-		// Проверяем что логин такой не занят
-		if (user) {
+		// Проверяем что логин, то есть существующий юзер existedUser такой уже есть, то возвращаем ошибку, а если такого юзера нет, то создаем нового юзера user
+		if (existedUser) {
 			return {
 				error: 'Такой логин уже занят',
 				res: null,
 			};
 		}
 
-		// Добавим нового пользователя в базу данных в db.json. Вызовем для этого отдельно созданную функцию addUser и передадим в неё логин и пароль для регистрации
-		await addUser(regLogin, regPassword);
+		// Если логин не занят, то добавим нового пользователя в базу данных в db.json. Вызовем для этого отдельно созданную функцию addUser и передадим в неё логин и пароль для регистрации
+		const user = await addUser(regLogin, regPassword);
+		// console.log(user);
 
-		// если же пользователь не найден, значит логин свободен
+		// и уже из нового юзера мы возьмем данные. Создаем сразу сессию, авторизуем
 		return {
 			error: null,
 			res: {

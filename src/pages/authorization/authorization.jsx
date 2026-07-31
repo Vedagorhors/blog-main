@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, Navigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { server } from '../../bff';
-import { Button, H2, Input } from '../../components';
+import { AuthFormError, Button, H2, Input } from '../../components';
+import { useResetForm } from '../../hooks';
 import { setUser } from '../../actions';
 import { selectUserRole } from '../../selectors';
 import { ROLE } from '../../constants';
@@ -17,8 +18,8 @@ const authFormSchema = yup.object().shape({
 		.string()
 		.required('Заполните логин')
 		.matches(/^\w+$/, 'Неверно заполнен логин. Допускаются только буквы и цифры')
-		.min(3, 'Неверно заполнен логин. Минимум 3 символа')
-		.max(15, 'Неверно заполнен логин. Максимум 15 символов'),
+		.min(3, 'Неверно заполнен пароль. Минимум 3 символа')
+		.max(15, 'Неверно заполнен пароль. Максимум 15 символов'),
 	password: yup
 		.string()
 		.required('Заполните пароль')
@@ -26,8 +27,8 @@ const authFormSchema = yup.object().shape({
 			/^[\w#%]+$/,
 			'Неверно заполнен пароль. Допускаются буквы, цифры и знаки # %',
 		)
-		.min(6, 'Неверно заполнен логин. Минимум 6 символов')
-		.max(30, 'Неверно заполнен логин. Максимум 30 символов'),
+		.min(6, 'Неверно заполнен пароль. Минимум 6 символов')
+		.max(30, 'Неверно заполнен пароль. Максимум 30 символов'),
 });
 
 const StyledLink = styled(Link)`
@@ -37,12 +38,7 @@ const StyledLink = styled(Link)`
 	font-size: 18px;
 `;
 
-const ErrorMessage = styled.div`
-	margin: 10px 0 0;
-	padding: 10px;
-	font-size: 18px;
-	background: #fcadad;
-`;
+// Здесь была константа ErrorMessage. Её при рефакторинге кода перенесли в отдельный файл auth-form-error.js и вместо ErrorMessage назвали компонент AuthFormError
 
 const AuthorizationContainer = ({ className }) => {
 	const {
@@ -67,29 +63,16 @@ const AuthorizationContainer = ({ className }) => {
 	// Авторизация  - это у нас компонент с контентом (файл authorization.jsx), а кнопка logout у нас вообще в шапке. То есть по нажатию кнопки в шапке мы должны каким-то образом сообщить в компонент авторизации (файл authorization.jsx), что нужно сделать сброс reset. Есть такой способ – для этого используется функционал redux, которого мы не рассматривали в уроках. Нам потребуется хук useStore, а также метод  unsubscribe, который вернет нам метод  subscription, который есть в объекте store. Этот метод subscribe() будет вызываться каждый раз, когда у нас будут происходить изменения в стейте, но нам нужно реагировать не на любые изменения, а только на те, в которых меняется флаг wasLogout.
 	// Теперь в компоненте авторизации authorization.jsx мы можем следить за стейтом и когда у нас измениться флаг wasLogout мы запустим функцию reset, таким образом сбросим нашу форму. Сделать это лучше всего в хуке useEffect. Нам потребуется создать подписку и отписку. Всё это делается при монтировании компонента
 
-	// store мы всегда получаем с помощью хука useStore на верхнем уровне прямо в компоненте, это обязательное правило. Хук useStore также применяется для того, чтобы store сохранялся между вызовами компонентов, для того, чтобы useEffect не дергался лишний раз
-	const store = useStore();
+	// store перенесли во вновь созданный файл use-reset-form куда также перенесли useEffect
+	// const store = useStore();
 
-	useEffect(() => {
-		// useEffect срабатывает на монтировании компонента и будет работать всего 1 раз, так как мы установили []. Получается строка с currentWasLogout выполнится коггда компонент смонтировался и мы всего 1 раз получим текущее значение флага currentWasLogout. Оно будет равно значению по умолчанию (у нас там false указан).
-		// для проверки флага wasLogout создадим две переменные, для того, чтобы у нас были предыдущие значения и текущие.
-		// currentWasLogout возьмем из store, пойдем в app и там будет wasLogout. Это мы сделаем до подписки
-		let currentWasLogout = store.getState().app.wasLogout;
-		// создаем подписчика
-		// const unsubscribe = store.subscribe(() => { - сделаем проще, см следующую строку
-		return store.subscribe(() => {
-			// внутри подписки здесь мы будем обновлять это значение с помощью текущего, то есть предыдущее значение присваиваем текущему
-			let previousWasLogout = currentWasLogout;
-			// а текущее значение обновляем. оно могло менится, потому что сработал обработчик store.subscribe(() => {}. при любом изменении в стейте обработчик этот будет выполняться. Нам нужно убедиться, что изменились именно те данные, которые нам нужны, а именно это данные про wasLogout. Таким образом мы получили предыдущее значение prevWasLogout, взяв его из текущего currentWasLogout на прошлом вызове и текущее актуальное взяли прямо из стейта (currentWasLogout = store.getState().app.wasLogout;) когда оно поменялось.
-			currentWasLogout = store.getState().app.wasLogout;
-			// и теперь осталось только сравнить эти оба значения. Если текущее значение не равно предыдущему, то мы вызываем функцию reset  и таким образом у нас сброситься форма и компонент обновиться, потому что об этом позаботиться React Hook Form, так как именно из него мы получаем функцию reset()
-			if (currentWasLogout !== previousWasLogout) {
-				reset();
-			}
-		});
-		// Теперь нам нужно вернуть из useEffect функцию unsubscribe, чтобы на размонтировании она вызвалась и сделала отписку.
-		// return unsubscribe; - сделаем проще - просто допишем выше return к store.subscribe...  и будет тоже самое
-	}, [reset, store]);
+	// Сделаем редирект на главную страницу с помощью условного рендеринга и роутера
+	// используем селектор для того, чтобы получить роль
+	const roleId = useSelector(selectUserRole);
+
+	// Здесь был useEffect, но так как он у нас повторяется в двух компонентах, в Authorization и здесь в Registration, то делаем рефакторинг кода. useEffect можно вынести в отдельный компонент. Нужно там создать кастомный хук, который будет заниматься сбросом формы.
+	// Теперь здесь вместо useEffect вызываем созданный с useEffect компонент кастомный хук useResetForm и в него передаем функцию reset, так как там в файле use-reset-form.js компонент useResetForm принимает reset
+	useResetForm(reset);
 
 	const onSubmit = ({ login, password }) => {
 		// когда мы нажимаем кнопку Войти, мы отправляем логин и пароль на сервер, для того, чтобы он нам вернул сессию. На сервер мы отправляем с помощью нашего BFF-эмулятора, у которог есть описанная функция authorize для авторизации.
@@ -114,7 +97,7 @@ const AuthorizationContainer = ({ className }) => {
 
 	// Сделаем редирект на главную страницу с помощью условного рендеринга и роутера
 	// используем селектор для того, чтобы получить роль
-	const roleId = useSelector(selectUserRole);
+	// const roleId = useSelector(selectUserRole);
 	// после получения роли, перед тем, как отрендерить нижеприведенную разметку мы проверяем роль. На главную страницу мы попадем когда залогиниваемся, то есть если мы не гость, то есть мы уже авторизовались, то переходим на главную страницу
 	if (roleId !== ROLE.GUEST) {
 		// если роль гость, то возвращаем разметку с компонентом Navigate  в котором указываем адрес главной страницы "/"
@@ -146,7 +129,7 @@ const AuthorizationContainer = ({ className }) => {
 				<Button type="submit" disabled={!!formError}>
 					Авторизоваться
 				</Button>
-				{errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+				{errorMessage && <AuthFormError>{errorMessage}</AuthFormError>}
 				<StyledLink to="/register">Регистрация</StyledLink>
 			</form>
 		</div>

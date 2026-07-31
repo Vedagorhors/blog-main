@@ -1,7 +1,8 @@
-import { getUsers } from './get-users';
-// Создадим функцию getUser, которая запрашивает список всех пользователей getUsers и потом по этому wсписку ищет нужного по логину
+// Создадим функцию getUser по аналогии с getUsers. А чтобы не запрашивать список всех пользователей getUsers, мы запросим конкретный логин с помощью ?login=${loginToFind} - то есть дописали запрос и подставили то, что мы ищем. Вместо одиночных кавычек поставили бэктики ``, так как используем шаблонную строку ${}
 // здесь нужно указывать async, await, потому что мы указываем несколько операций
-export const getUser = async (loginToFind) => {
-	const users = await getUsers();
-	return users.find(({ login }) => login === loginToFind);
-};
+// Мы возвращаем поиск из базы данных и фильтруем по логину. Нам вернется не одиин объект, а массив из объектов, в которых совпадает логин с указанным логином. Поэтому мы возвращаем данные loadedUsers.json() и вернем нулевой элемент [0]. А .? - это для подстраховки, хотя мы точно вернем массив, тогда убираем .?
+export const getUser = async (loginToFind) =>
+	fetch(`http://localhost:3005/users?login=${loginToFind}`)
+		.then((loadedUser) => loadedUser.json())
+		// json возвращает promise, поэтому делаем через then. Здесь мы loadedUser извлечем из массива деструктуризации и вернем его же loadedUser
+		.then(([loadedUser]) => loadedUser);

@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { Header, Footer } from './components';
-import { Authorization } from './pages';
+import { Authorization, Registration } from './pages';
 import styled from 'styled-components'; // вместо CSS-модулей здесь будем использовать Styled-components, просто для примера, потому что ранее в уроках мы использовали только css-модули
 
 const AppColumn = styled.div`
@@ -35,7 +35,9 @@ export const Blog = () => {
 					<Route path="/" element={<div>Главная страница</div>} />
 					{/* <Route path="/login" element={<div>Авторизация</div>} /> - это была сначала заглушка, пока мы не создали компонент авторизации Authorization */}
 					<Route path="/login" element={<Authorization />} />
-					<Route path="/register" element={<div>Регистрация</div>} />
+					{/* <Route path="/register" element={<div>Регистрация</div>} /> */}
+					{/* после того, как создали компонент Registration, импортируем его в этот файли подставляем вместо заглушки: */}
+					<Route path="/register" element={<Registration />} />
 					<Route path="/users" element={<div>Пользователи</div>} />
 					<Route path="/post" element={<div>Новая статья</div>} />
 					<Route path="/post/:postId" element={<div>Статья</div>} />
