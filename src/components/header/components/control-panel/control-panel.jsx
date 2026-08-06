@@ -33,11 +33,12 @@ const RightAligned = styled.div`
 // 	background-color: #eee;
 // `;
 
-const StyledIcon = styled.div`
-	&:hover {
-		cursor: pointer;
-	}
-`;
+// эту обёртку перенесли внутрь иконки в файл icon.jsx
+// const StyledIcon = styled.div`
+// 	&:hover {
+// 		cursor: pointer;
+// 	}
+// `;
 
 const UserName = styled.div`
 	font-size: 18px;
@@ -63,21 +64,22 @@ const ControlPanelContainer = ({ className }) => {
 					<>
 						{/* в шапке размещаем имя пользователя, иконку, по нажатию на которую будет отправляться экшен, чтобы разлогинить пользователя  */}
 						<UserName>{login}</UserName>
-						<StyledIcon>
-							<Icon
-								id="fa-sign-out"
-								margin="0 0 0 10px"
-								// здесь по нажатию запускаем loguot. В файле app-reducer этот logout отловиться, измениться флаг, а уже изменения флага мы отловим в файле authorization.jsx в subscribe.  Сложная схема, но зато она позволяет передавать данные и реагировать на какие-то изменения просто совершенно разным местам приложения, так как шапка и страница это разные места, два разных компонента, а мы взяли и передали между ними данные
-								onClick={() => dispatch(logout(session))}
-							/>
-						</StyledIcon>
+						{/* эта оберта уже не нужна, так как мы перенесли стилизацию в файл icon.jsx */}
+						{/* <StyledIcon> */}
+						<Icon
+							id="fa-sign-out"
+							margin="0 0 0 10px"
+							// здесь по нажатию запускаем loguot. В файле app-reducer этот logout отловиться, измениться флаг, а уже изменения флага мы отловим в файле authorization.jsx в subscribe.  Сложная схема, но зато она позволяет передавать данные и реагировать на какие-то изменения просто совершенно разным местам приложения, так как шапка и страница это разные места, два разных компонента, а мы взяли и передали между ними данные
+							onClick={() => dispatch(logout(session))}
+						/>
+						{/* </StyledIcon> */}
 					</>
 				)}
 			</RightAligned>
 			<RightAligned>
-				<StyledIcon onClick={() => navigate(-1)}>
-					<Icon id="fa-backward" margin="10px 0 0 0" />
-				</StyledIcon>
+				{/* <StyledIcon> */}
+				<Icon id="fa-backward" margin="10px 0 0 0" onClick={() => navigate(-1)} />
+				{/* </StyledIcon> */}
 				<Link to="/post">
 					<Icon id="fa-file-text-o" margin="10px 0 0 16px" />
 				</Link>

@@ -2,7 +2,7 @@ import { ACTION_TYPE } from '../actions';
 import { ROLE } from '../constants';
 
 const initialUserState = {
-	// это данные о пользователе
+	// это данные о пользователе. session: null - если null, значит юзер не авторизованный
 	id: null,
 	login: null,
 	roleId: ROLE.GUEST,

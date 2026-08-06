@@ -3,8 +3,8 @@
     {
       "id": "001",
       "login": "ivan",
-      "password": "qwerty123",
-      "register_at": "2050-09-22",
+      "password": "qwe123",
+      "registed_at": "2050-09-22",
       "role_id": 0
     },
     {
@@ -13,20 +13,6 @@
       "registed_at": "2038-07-28 08:18",
       "role_id": 2,
       "id": "lby3NnbDMXs"
-    },
-    {
-      "login": "ivan2",
-      "password": "qwerty123",
-      "registed_at": "2063-12-19 15:19",
-      "role_id": 2,
-      "id": "DplNRJeLcLw"
-    },
-    {
-      "login": "ivan3",
-      "password": "qwerty123",
-      "registed_at": "2041-06-17 10:44",
-      "role_id": 2,
-      "id": "pgYksXOR_Bk"
     }
   ],
   "roles": [

@@ -1,5 +1,5 @@
 // Добавим нового пользователя в базу данных в db.json. Выполним запрос с для записи с методом POST. Нового пользователя всегда добавляем с ролью 2 - читатель.
-import { generateDate } from './generate-date';
+import { generateDate } from '../utils';
 
 export const addUser = (login, password) =>
 	fetch('http://localhost:3005/users', {

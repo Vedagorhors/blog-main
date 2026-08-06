@@ -112,6 +112,8 @@ const AuthorizationContainer = ({ className }) => {
 				<Input
 					type="text"
 					placeholder="Логин..."
+					// это добавил я: autoComplete="username"
+					autoComplete="username"
 					{...register('login', {
 						// сделаем сброс серверной ошибки. То есть когда мы заполняем поле логина, то появляется сообщеие предупреждение об ошибке, но потом мы продожаем писать логин и ошибка должна сама исчезать, но она не пропадает, поэтому сделаем так, чтобы она пропадала при условиях когда логин удовлетворяет требованиям. Добавим свой onChange для функции register
 						onChange: () => setServerError(null),
@@ -120,6 +122,8 @@ const AuthorizationContainer = ({ className }) => {
 				<Input
 					type="password"
 					placeholder="Пароль..."
+					// это добавил я: autoComplete="current-password"
+					autoComplete="current-password"
 					{...register('password', {
 						// сделаем сброс серверной ошибки. Также как для логина
 						onChange: () => setServerError(null),
