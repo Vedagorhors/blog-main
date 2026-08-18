@@ -4,14 +4,15 @@ import { ROLE } from '../constants';
 import { sessions } from '../sessions';
 
 // у нас только две операции работают без сессии - это авторизация и регистрация
-export const removeUser = async (userSession, userId) => {
+export const removeUser = async (hash, userId) => {
 	// для того, чтобы обновить роль, пользователь должен быть администратором
 	const accessRoles = [ROLE.ADMIN];
 
 	// Проверяем доступ в сессиях, что у пользователя есть права на получение списка ролей. Это может делать только администратор. Если проверка не пройдена, то отправляем ошибку. (! - проверка провалилась)
 	// Эту сессию userSession мы отправляем для проверки доступа, а также отправляем в нашу утилиту accessRoles (роли с доступом), то есть мы отправляем массив с теми ролями, для которых эта операция доступна, а это определяет сама операция, она знает для кого она доступна на сервере
 	// Если доступа нет, то мы об этом сообщаем: error: 'Доступ запрещен'
-	if (!sessions.access(userSession, accessRoles)) {
+	const access = await sessions.access(hash, accessRoles);
+	if (!access) {
 		return {
 			error: 'Доступ запрещен',
 			res: null,

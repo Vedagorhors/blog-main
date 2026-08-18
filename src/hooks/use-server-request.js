@@ -14,7 +14,7 @@ export const useServerRequest = () => {
 	return useCallback(
 		(operation, ...params) => {
 			// здесь выбираем какие должны быть параметры при отправке на сервер
-			const request = ['register', 'authorize'].includes(operation)
+			const request = ['register', 'authorize', 'fetchPost'].includes(operation)
 				? params
 				: [session, ...params];
 			// и отправляем когда эта функция вызывается
@@ -23,3 +23,4 @@ export const useServerRequest = () => {
 		[session],
 	);
 };
+// здесь нам не нужна сессия, это открытая информация и каждый может читать статьюы

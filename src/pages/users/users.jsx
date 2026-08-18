@@ -53,7 +53,7 @@ const UsersContainer = ({ className }) => {
 
 	return (
 		<div className={className}>
-			{/* оборачиваем всё в компонент Content и передаем проп error, чтобы компонент Content сам определил есть ошибка или нет */}
+			{/* Проверка на ошибку. Оборачиваем всё в компонент Content и передаем проп error, чтобы компонент Content сам определил есть ошибка или нет */}
 			<Content error={errorMessage}>
 				<H2>Пользователи</H2>
 				<div>

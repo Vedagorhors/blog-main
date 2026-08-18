@@ -52,6 +52,13 @@ const ControlPanelContainer = ({ className }) => {
 	const login = useSelector(selectUserLogin);
 	// сессию также берем из стейта с помощью селектора
 	const session = useSelector(selectUserSession);
+
+	// делаем функцию для очистки sessionStorage после нажатия на кнопку разлогиниться, то на на стрелку выхода (иконка a-sign-out)
+	const onLogout = () => {
+		dispatch(logout(session));
+		sessionStorage.removeItem('userData');
+	};
+
 	return (
 		<div className={className}>
 			<RightAligned>
@@ -62,7 +69,7 @@ const ControlPanelContainer = ({ className }) => {
 					</Button>
 				) : (
 					<>
-						{/* в шапке размещаем имя пользователя, иконку, по нажатию на которую будет отправляться экшен, чтобы разлогинить пользователя  */}
+						{/* в шапке размещаем имя пользователя, иконку выхода то есть кнопка, чтобы разлогиниться, по нажатию на которую будет отправляться экшен, чтобы разлогинить пользователя  */}
 						<UserName>{login}</UserName>
 						{/* эта оберта уже не нужна, так как мы перенесли стилизацию в файл icon.jsx */}
 						{/* <StyledIcon> */}
@@ -70,7 +77,10 @@ const ControlPanelContainer = ({ className }) => {
 							id="fa-sign-out"
 							margin="0 0 0 10px"
 							// здесь по нажатию запускаем loguot. В файле app-reducer этот logout отловиться, измениться флаг, а уже изменения флага мы отловим в файле authorization.jsx в subscribe.  Сложная схема, но зато она позволяет передавать данные и реагировать на какие-то изменения просто совершенно разным местам приложения, так как шапка и страница это разные места, два разных компонента, а мы взяли и передали между ними данные
-							onClick={() => dispatch(logout(session))}
+							// мы сначала делали эту заглушку:
+							// onClick={() => dispatch(logout(session))}
+							// // а потом написали функцию onLogout и просто вставили вместо заглушки, вот так:
+							onClick={onLogout}
 						/>
 						{/* </StyledIcon> */}
 					</>
