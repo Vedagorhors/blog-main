@@ -102,13 +102,6 @@
     {
       "author_id": "001",
       "post_id": "001",
-      "published_at": "2060-04-06 08:33",
-      "content": "dfgsdf",
-      "id": "QeHagxZHIk0"
-    },
-    {
-      "author_id": "001",
-      "post_id": "001",
       "published_at": "2034-12-30 18:06",
       "content": "Мой первый комментарий!",
       "id": "YwaDnFmC83o"
@@ -123,37 +116,9 @@
     {
       "author_id": "001",
       "post_id": "001",
-      "published_at": "2063-12-07 07:39",
-      "content": "eojfnv;eiovefvni",
-      "id": "wofQ_IhIg7g"
-    },
-    {
-      "author_id": "001",
-      "post_id": "001",
-      "published_at": "2045-02-07 12:01",
-      "content": "куку",
-      "id": "kN1N3ue84ys"
-    },
-    {
-      "author_id": "001",
-      "post_id": "001",
       "published_at": "2033-10-25 11:57",
       "content": "Мой третий комментарий!",
       "id": "FvorLZtUQmg"
-    },
-    {
-      "author_id": "001",
-      "post_id": "001",
-      "published_at": "2056-08-20 05:36",
-      "content": "Мой 4 комментарий",
-      "id": "L_jKsy0d6vg"
-    },
-    {
-      "author_id": "001",
-      "post_id": "001",
-      "published_at": "2058-03-31 13:22",
-      "content": "Комментарий 5",
-      "id": "_ugQqC3I9dU"
     }
   ],
   "sessions": [

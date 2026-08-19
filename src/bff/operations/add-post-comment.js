@@ -21,7 +21,7 @@ export const addPostComment = async (hash, userId, postId, content) => {
 		};
 	}
 	// console.log('После проверки доступа addPostComment', userId, postId, content);
-
+	// здесь postId  нам нужен только для того, чтобы обновить информацию о посте
 	await addComment(userId, postId, content);
 
 	// загружаю статью (post)

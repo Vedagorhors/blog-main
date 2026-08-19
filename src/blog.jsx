@@ -1,7 +1,7 @@
 import { useLayoutEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Header, Footer } from './components';
+import { Header, Footer, Modal } from './components';
 import { Authorization, Post, Registration, Users } from './pages';
 import { setUser } from './actions';
 import styled from 'styled-components'; // вместо CSS-модулей здесь будем использовать Styled-components, просто для примера, потому что ранее в уроках мы использовали только css-модули
@@ -72,6 +72,8 @@ export const Blog = () => {
 				</Routes>
 			</Page>
 			<Footer />
+			{/* разместим модальное окно под футером, но окно все равно будет разешщаться поверх всего контента. По сути можно его здесь в любое место разметки поместить */}
+			<Modal />
 		</AppColumn>
 	);
 };

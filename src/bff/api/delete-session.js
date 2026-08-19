@@ -1,4 +1,4 @@
-// Выполняем действия по удалению сессии
+// Выполняем действия по удалению сессии. Зарпос в базу данных по поводу удаления сессии.
 // import { getSession } from './get-session';
 
 export const deleteSession = async (sessionId) =>
