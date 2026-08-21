@@ -1,9 +1,9 @@
 // создадим страницу Статья
 // Страница Статья доступна для всех пользователей, поэтому сообщение об ошибке показывать не нужно. То есть нам не потребуется заворачивать содержимое в тег Content, который проверяет на ошибку
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useMatch, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Comments, PostContent } from './components';
+import { Comments, PostContent, PostForm } from './components';
 import { useServerRequest } from '../../hooks';
 import { loadPostAsync } from '../../actions';
 import { selectPost } from '../../selectors';
@@ -14,6 +14,9 @@ const PostContainer = ({ className }) => {
 	const dispatch = useDispatch();
 	// получаем параметры
 	const params = useParams();
+	// Чтобы понять, что у нас происходит редактирование и сделаем это с помощью хука useMatch. Пишем isEditing - то есть является ли это состояние редактированием или нет. И проверяем наш текущий роут, смотрим соответствует ли он такому шаблону: /post/:id/edit. Если совпадение есть, значит мы редактируем, если нет, значит мы просто читаем контент
+	const isEditing = useMatch('/post/:id/edit');
+
 	const requestServer = useServerRequest();
 	// получаем пост, который загрузится асинхронно при открытии данной страницы Статья
 	const post = useSelector(selectPost);
@@ -29,9 +32,18 @@ const PostContainer = ({ className }) => {
 	return (
 		// разобьем верстку страницы статьи на две части - содержимое статьи и блок комментариев, то есть создадим два компонента PostContent и Comments
 		<div className={className}>
+			{/* используем условный рендеринг */}
+			{isEditing ? (
+				<PostForm post={post} />
+			) : (
+				<>
+					<PostContent post={post} />
+					<Comments comments={post.comments} postId={post.id} />
+				</>
+			)}
 			{/* отправим полученные с помощью селектора данные внутрь компонета post и в комментарии в компонент Comments также отрпавим конкретно комментарии post.comments  */}
-			<PostContent post={post} />
-			<Comments comments={post.comments} postId={post.id} />
+			{/* <PostContent post={post} />
+			<Comments comments={post.comments} postId={post.id} /> */}
 			{/* теперь принимаем эти данные в каждом из компонентов PostContent и Comments, см. файлы компонентов */}
 		</div>
 	);
