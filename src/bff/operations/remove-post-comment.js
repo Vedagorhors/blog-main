@@ -1,4 +1,4 @@
-// Операция по удалению комментария. Напишем её на основе кода из файла add-post-comment.js
+// Операция по удалению статьи. Напишем её на основе кода из файла remove-post-comment.js
 
 import { deleteComment, getComments, getPost } from '../api';
 import { sessions } from '../sessions';
@@ -47,18 +47,3 @@ export const removePostComment = async (hash, postId, id) => {
 };
 
 // Теперь нужно создать запрос в базу данных, это будет deleteComment. Создадим в папке api файл delete-comment.js
-
-// Переписал код ниже. Изменения: дописал getUsers в импорт, добавил строку const users = await getUsers(); и обернул comments в .map(...), чтобы к каждому комментарию добавить author — логин автора вместо authorId.
-
-// можно и так:
-// 	return {
-// 		error: null,
-// 		res: {
-// 			...post,
-// 			comments: comments.map((comment) => ({
-// 				...comment,
-// 				author: users.find(({ id }) => id === comment.authorId)?.login,
-// 			})),
-// 		},
-// 	};
-// };

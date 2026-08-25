@@ -20,6 +20,9 @@ export const postReducer = (state = initialPostState, action) => {
 				...state,
 				...action.payload,
 			};
+		case ACTION_TYPE.RESET_POST_DATA:
+			// при сбросе данных статьи мы будем записывать в стейт статьи исходные параметры initialPostState
+			return initialPostState;
 		default:
 			return state;
 	}

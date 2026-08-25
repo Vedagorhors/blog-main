@@ -1,17 +1,56 @@
+import { useDispatch } from 'react-redux';
+import { CLOSE_MODAL, openModal, removePostAsync } from '../../../../actions';
 import { Icon } from '../../../../components';
+import { useServerRequest } from '../../../../hooks';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 // индексировать (делать реэкспорт) не будем, потому что этот компонент не предназначен для использования извне этой папки components. Это компонент для того, чтобы его использовали его соседи, а они его будут использовать через прямой импорт, а не через индексированный для того, чтобы не появилась проблема с циклическими зависимостями
-const SpecialPanelContainer = ({ className, publishedAt, editButton }) => {
+const SpecialPanelContainer = ({ className, id, publishedAt, editButton }) => {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const requestServer = useServerRequest();
+	// Удаление статьи с помощью экшена (action) removePostAsync
+	const onPostRemove = (id) => {
+		// мы здесь должны открыть модальное окно. Ниже применим экшены, которые после этого создадим в отдельных файлах
+		// для открытия модального окна создадим action-creator  и в него передадим информацию, что в нем должно отображаться
+		dispatch(
+			openModal({
+				text: 'Удалить статью?',
+				// пока не понятно, что делать на подтверждение Confirm, поэтому ставлю заглушку
+				// onConfirm: '',
+				// мы отправляем коллбэк, который будет выполнять удаление комментария, который мы уже реализовали и опробовали
+				onConfirm: () => {
+					// нам нужно сделать редирект (переадресацию) на главную страницу после удаления статьи. Здесь нужно понимать, что строка dispatch(CLOSE_MODAL) синхронный код и он сработает раньше, чем код dispatch(removePostAsync(requestServer, id)).then... потому что then это асинхронный код. После выполнения этих двух строк через некоторое время после ответа сервера выполнится уже then
+					dispatch(removePostAsync(requestServer, id)).then(() => {
+						// после удаления статьи переходим на главную страницу
+						navigate('/');
+					});
+					// закрываем модальное окно сразу после того, как была нажата кнопка подтверждения удаления, то есть кнопка Да.
+					dispatch(CLOSE_MODAL);
+				},
+				// а в onCancel мы просто закрываем модальное окно. Это будет не экшен-криэйтор, а обычный экшен константой
+				onCancel: () => dispatch(CLOSE_MODAL),
+				// теперь создадим эти экшены
+			}),
+		);
+		// этот коллбык переносим выше в onConfirm.
+		// dispatch(removePostAsync(requestServer, postId, id));
+	};
+	// Создадим этот экшен removePostAsync. Создадим новый файл remove-post-async.js а также нужно реализовать операцию и обращение к базе данных
+
 	return (
 		<div className={className}>
 			<div className="published-at">
-				<Icon
-					id="fa-calendar-o"
-					margin="0 7px 0 0"
-					size="18px"
-					onClick={() => {}}
-				/>
+				{/* Чтобы иконка календаря не отображалась на странице создания статьи, так как статья еще не опубликована, то сделаем так - иконку показываем тольк, если в publishedAt что-то имеется. Получается если есть дата публикации, значит статья существует */}
+				{publishedAt && (
+					<Icon
+						inactive={true}
+						id="fa-calendar-o"
+						margin="0 7px 0 0"
+						size="18px"
+					/>
+				)}
 				{publishedAt}
 			</div>
 			{/* панель с кнопками в статье. Кнопка удаления будет одинаковой, а кнопка сохранения fa-floppy-o будет меняться, её нужно будет указывать, поэтому сделаем её через пропсы */}
@@ -24,7 +63,15 @@ const SpecialPanelContainer = ({ className, publishedAt, editButton }) => {
 					margin="0 10px 0 0"
 					onClick={() => {}}
 				/> */}
-				<Icon id="fa-trash-o" size="21px" onClick={() => {}} />
+				{/* Чтобы иконка корзины не отображалась на странице создания статьи, так как статья еще не опубликована и удалять нечего, то сделаем так - иконку показываем только, если в publishedAt что-то имеется. Получается если есть дата публикации, значит статья существует и её можно удалить */}
+				{publishedAt && (
+					<Icon
+						id="fa-trash-o"
+						size="21px"
+						margin="0 0 0 7px"
+						onClick={() => onPostRemove(id)}
+					/>
+				)}
 			</div>
 		</div>
 	);

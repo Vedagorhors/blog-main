@@ -1,11 +1,11 @@
 // создадим страницу Статья
 // Страница Статья доступна для всех пользователей, поэтому сообщение об ошибке показывать не нужно. То есть нам не потребуется заворачивать содержимое в тег Content, который проверяет на ошибку
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useMatch, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Comments, PostContent, PostForm } from './components';
 import { useServerRequest } from '../../hooks';
-import { loadPostAsync } from '../../actions';
+import { loadPostAsync, RESET_POST_DATA } from '../../actions';
 import { selectPost } from '../../selectors';
 import styled from 'styled-components';
 
@@ -14,6 +14,10 @@ const PostContainer = ({ className }) => {
 	const dispatch = useDispatch();
 	// получаем параметры
 	const params = useParams();
+
+	// Мы сбрасываем все поля на пустые, когда компонент только монтируется и для новой статьи нужно сделать так, чтобы не запрашивать данные с сервера, нам нечего там скачивать. Для этого создадим еще одного проверяльщика isCreating - является ли страница созданием статьи. Потом обработаеи в useEffect ниже
+	const isCreating = useMatch('/post');
+
 	// Чтобы понять, что у нас происходит редактирование и сделаем это с помощью хука useMatch. Пишем isEditing - то есть является ли это состояние редактированием или нет. И проверяем наш текущий роут, смотрим соответствует ли он такому шаблону: /post/:id/edit. Если совпадение есть, значит мы редактируем, если нет, значит мы просто читаем контент
 	const isEditing = useMatch('/post/:id/edit');
 
@@ -22,21 +26,41 @@ const PostContainer = ({ className }) => {
 	const post = useSelector(selectPost);
 	// console.log(post);
 
+	// Когда мы удаляем статью и комментарии к статье, то нужно удалить и данные из redux store, сделаем это с помощью useLayoutEffect - это аналог useEffect, но который выполняется синхронно. Вызовем его только на монтирование компонента ([]) и получится, что при каждом открытии страницы со статьей мы будем сбрасывать данные поста, а потом они уже в обычном useEffect будут подгружаться (см. ниже)
+	useLayoutEffect(() => {
+		// здесь мы диспатчим экшен сброса статьи. dispatch(RESET_POST_DATA) выполнится синхронно сразу при запуске компонента и через некоторое время выполнится useEffect (приведен ниже), который загрузит данные уже конкретного поста, если они нужны.
+		dispatch(RESET_POST_DATA);
+		// console.log('dispatch');
+		// useLayoutEffect нужно запускать когда isCreating меняется и тогда
+	}, [dispatch, isCreating]);
+	// console.log('useSelector');
+
+	// в файл reset-post-data.js добавим экшен и также обработаем его в редюсере в файле post-reducer.js
+
 	// в useEffect получим данные с сервера о названии статьи, чтобы отобразить в заголовке H2 и вообще данные для статьи
 	useEffect(() => {
+		// если это создание новой статьи, то прерываем и дальше ничего не делаем, то есть не запрашиваем данные с сервера
+		if (isCreating) {
+			return;
+		}
 		// задиспатчим асинхронный экшен loadPost, а какого поста мы узнаем из id, котоорый мы возьмем из адреса с помощью пакета React Router, хука useParams. Мы добавили requestServer и чтобы его использовать добавим его передать в экшен этот requestServer. Этот диспатч загружает нам данные асинхронно, а когда ответ приходит, то в файле load-post-async мы вызываем диспатч уже с синхронным экшеном dispatch(setPostData(postData)); Этот экшен в свою очередь устанавливает state в redux store и мы оттуда сможем уже их получить с помощью селектора. Для этого добавим селектор в папку selectors файл select-post.js
 
 		dispatch(loadPostAsync(requestServer, params.id));
 		// подготовим асинхронный экшен loadPost, для этого в папке action создадим файл load-post.js
-	}, [dispatch, requestServer, params.id]);
+	}, [dispatch, requestServer, params.id, isCreating]);
+	// console.log(post);
+
 	return (
 		// разобьем верстку страницы статьи на две части - содержимое статьи и блок комментариев, то есть создадим два компонента PostContent и Comments
 		<div className={className}>
-			{/* используем условный рендеринг */}
-			{isEditing ? (
-				<PostForm post={post} />
+			{/* используем условный рендеринг. Либо создание новой статьи либо редактирование статьи в любом случае отображаем форму для статьи, а вдругом случае отображаем контент с комментариями */}
+			{isCreating || isEditing ? (
+				<PostForm key={post.id} post={post} />
 			) : (
 				<>
+					{/* если идет создание статьи, то отправляем исходные данные, а если не
+					создание, то отправляем статью  - этот костыль уже не нужен */}
+					{/* <PostContent post={isCreating ? initialPostState : post} /> */}
 					<PostContent post={post} />
 					<Comments comments={post.comments} postId={post.id} />
 				</>

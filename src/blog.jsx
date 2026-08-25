@@ -66,7 +66,8 @@ export const Blog = () => {
 					{/* после того, как создали компонент Registration, импортируем его в этот файли подставляем вместо заглушки: */}
 					<Route path="/register" element={<Registration />} />
 					<Route path="/users" element={<Users />} />
-					<Route path="/post" element={<div>Новая статья</div>} />
+					{/* Для страницы новой статьи также используем {<Post />}. Нам это тоже подойдет, мы его же использовали и для редактирования статьи. А подойдет, потому что Новая статья также похожа на страницу редактирования, только начинаем мы не сзаполненных полей, а с пустых */}
+					<Route path="/post" element={<Post />} />
 					<Route path="/post/:id" element={<Post />} />
 					<Route path="/post/:id/edit" element={<Post />} />
 					<Route path="*" element={<div>Ошибка</div>} />

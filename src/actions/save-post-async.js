@@ -6,4 +6,8 @@ import { setPostData } from './set-post-data';
 export const savePostAsync = (requestServer, newPostData) => (dispatch) =>
 	requestServer('savePost', newPostData).then((updatedPost) => {
 		dispatch(setPostData(updatedPost.res));
+		// console.log(updatedPost);
+
+		// отдаем данные о статье
+		return updatedPost.res;
 	});

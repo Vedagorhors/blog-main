@@ -1,6 +1,6 @@
 // Создадим операцию сохранения статьи, то есть чтобы обработать данные на сервере создадим для этого операцию. Здесь будет обновление.
 
-import { updatePost } from '../api';
+import { addPost, updatePost } from '../api';
 import { ROLE } from '../constants';
 import { sessions } from '../sessions';
 import { transformPost } from '../transformers';
@@ -23,19 +23,23 @@ export const savePost = async (hash, newPostData) => {
 
 	// Пользователь с каждым запросом на сервер, будет присылать нам хэш, который сервер ему выдал в процессе авторизации. А хэш мы будем хранить в поле session в redux store в файле user-reducer session: null. Если null, значит юзер не авторизованный
 
-	// Если доступ есть, то совершаем операцию updatePost:
+	// Если доступ есть, то совершаем операцию сохранения статьи в случае, если id равен пустой строке, то мы создаем статью, а если же id не равен пустой строке, то мы значит обновляем статью
 	// const updatedPost = await updatePost(newPostData);
-	const updatedPost = await updatePost(
-		newPostData.id,
-		newPostData.imageUrl,
-		newPostData.title,
-		newPostData.content,
-	);
+	const savedPost =
+		newPostData.id === ''
+			? await addPost(newPostData.imageUrl, newPostData.title, newPostData.content)
+			: await updatePost(
+					newPostData.id,
+					newPostData.imageUrl,
+					newPostData.title,
+					newPostData.content,
+				);
+	// добавим обработку создания статьи, для этого в папке api создадим файл add-post.js (хотя лучше наверное назвать файл create-post.js), но раз опдобные файлы у нас там с названием add, то оставим add-post
 
-	// возвращаем, что ошибок нет и роль установилась, то есть res (response) равно true
+	// возвращаем, что ошибок нет и роль установилась, то есть res (response) равно true, возвращаем данные о созданной статье
 	return {
 		error: null,
-		res: transformPost(updatedPost),
+		res: transformPost(savedPost),
 	};
 };
 
