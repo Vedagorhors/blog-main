@@ -2,7 +2,7 @@ import { useLayoutEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Header, Footer, Modal } from './components';
-import { Authorization, Post, Registration, Users } from './pages';
+import { Authorization, Main, Post, Registration, Users } from './pages';
 import { setUser } from './actions';
 import styled from 'styled-components'; // вместо CSS-модулей здесь будем использовать Styled-components, просто для примера, потому что ранее в уроках мы использовали только css-модули
 
@@ -59,7 +59,7 @@ export const Blog = () => {
 			<Page>
 				{/* <H2>Контент страницы</H2> - уже не нужен заголовок. делал просто для наглядности */}
 				<Routes>
-					<Route path="/" element={<div>Главная страница</div>} />
+					<Route path="/" element={<Main />} />
 					{/* <Route path="/login" element={<div>Авторизация</div>} /> - это была сначала заглушка, пока мы не создали компонент авторизации Authorization */}
 					<Route path="/login" element={<Authorization />} />
 					{/* <Route path="/register" element={<div>Регистрация</div>} /> */}
