@@ -3,9 +3,12 @@
 import { transformPost } from '../transformers';
 
 // Используем трансформер в запросе списка статей. Трансформер мы создали, чтобы можно было использовать в нескольких местах.
-export const getPosts = () =>
-	fetch('http://localhost:3005/posts')
+// Для реализации пагинации к адресу мы допишем те параметры _page  и _limit (параметр указывающий сколько статей у нас будет на одной странице) из документации про пагинацию для json-сервера, что мы смотрим здесь: github.com/typicode/json-server#paginate. Теперь параметры _page  и _limit нужно передать в операции в файле fetch-posts.js
+
+export const getPosts = (page, limit) =>
+	fetch(`http://localhost:3005/posts?_page=${page}&_per_page=${limit}`)
 		.then((loadedPosts) => loadedPosts.json())
-		// мы получили список статей и теперь сделаем для него маппинг (используем метод map).
-		// Наш трансформер является функцией для маппинга списка статей
-		.then((loadedPosts) => loadedPosts && loadedPosts.map(transformPost));
+		.then((loadedPosts) => ({
+			...loadedPosts,
+			data: loadedPosts.data.map(transformPost),
+		}));

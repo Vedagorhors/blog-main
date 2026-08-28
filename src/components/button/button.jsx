@@ -10,6 +10,7 @@ const ButtonContainer = ({ children, className, width, ...props }) => {
 	);
 };
 
+// курсор для кнопок пагинации делаем так: принимаем disabled и если он тру, то кнопка будкет ввиде стрелки, а если он фалсе, то кнопка в виде руки. Это чтобы при наведении на неактивные кнопки курсор должен быть просто стрелкой, то есть default
 export const Button = styled(ButtonContainer)`
 	display: flex;
 	justify-content: center;
@@ -21,6 +22,6 @@ export const Button = styled(ButtonContainer)`
 	background-color: rgb(238, 238, 238);
 
 	&:hover {
-		cursor: pointer;
+		cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
 	}
 `;
