@@ -1,7 +1,7 @@
 // export const getLastPageFromLinks = (links) => {
 // 	const result = links.match(/^.+_page=(\d{1,4})&_limit=\d{1,3}>; rel="last"$/);
 
-// 	return Number(result[1]);
+// 	return result ? Number(result[1]) : 1;
 // };
 
 // Данная утилита мне не нужна, так как у меня версия JSON server 1.0.0-beta.15
