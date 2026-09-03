@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Content, H2 } from '../../components';
+import { useSelector } from 'react-redux';
+import { PrivateContent, H2 } from '../../components';
 import { TableRow, UserRow } from './components';
 import { useServerRequest } from '../../hooks';
+import { selectUserRole } from '../../selectors';
+import { checkAccess } from '../../utils';
 import { ROLE } from '../../constants';
 import styled from 'styled-components';
 
@@ -14,6 +17,8 @@ const UsersContainer = ({ className }) => {
 	const [shouldUpdateUserList, setShouldUpdateUserList] = useState(false);
 	// console.log('shouldUpdateUserList', shouldUpdateUserList);
 
+	const userRole = useSelector(selectUserRole);
+
 	// На сервере у нас есть как-бы ручки и вот мы их запрашиваем, описывая здесь адрес этих ручек и один из адресов, это fetchRoles. При необходимости можем передавать нагрузочные данные вторым аргументом
 	const requestServer = useServerRequest();
 	// мы должны запросить и получить роли с сервера
@@ -21,6 +26,10 @@ const UsersContainer = ({ className }) => {
 
 	// делаем запросы на сервер в хуке useEffect
 	useEffect(() => {
+		// если доступа. нет, т омы не продалжаем
+		if (!checkAccess([ROLE.ADMIN], userRole)) {
+			return;
+		}
 		// console.log('useEffect');
 
 		Promise.all([requestServer('fetchUsers'), requestServer('fetchRoles')]).then(
@@ -38,10 +47,15 @@ const UsersContainer = ({ className }) => {
 			},
 		);
 		// здесь возникло замечания приттера, что в пустой массив зависимостей хука useEffect необходимо вставить requestServer, но если мы вставим, то при каждом рендере у нас будет запускаться useEffect, а нам нужно, чтобы наша функция имела постоянную ссылку, если сессия session не меняется. Для этого нужно в файле use-server-request.js применить useCallback. Далее пояснения смотри в файле use-server-request.js
-	}, [requestServer, shouldUpdateUserList]);
+	}, [requestServer, shouldUpdateUserList, userRole]);
 
 	// Реализуем удаление пользователя. После удаления необходимо обновить список пользователей
 	const onUserRemove = (userId) => {
+		// если доступа. нет, то мы не продалжаем
+		if (!checkAccess([ROLE.ADMIN], userRole)) {
+			return;
+		}
+
 		console.log('onUserRemove', userId);
 		requestServer('removeUser', userId).then(() => {
 			// console.log('requestServer then');
@@ -51,10 +65,12 @@ const UsersContainer = ({ className }) => {
 		// затем берем это коллбэк и щлем его в UserRow, см. ниже
 	};
 
+	//  Проверка на ошибку. Оборачиваем всё в компонент PrivateContent и передаем проп error, чтобы компонент PrivateContent сам определил есть ошибка или нет.
+	// Можем заранее узнать что из себя представляет пользователь и соответственно отобразить ошибку доступа, если этого доступа нет - каким образом это сделать - мы будем указывать для каждой страницы для компонента PrivateContent параметры доступа. В access перечисляем роли, у которых есть доступ и передаем сюда же сообщение об ошибке6 которое мы получаем с сервера
+
 	return (
-		<div className={className}>
-			{/* Проверка на ошибку. Оборачиваем всё в компонент Content и передаем проп error, чтобы компонент Content сам определил есть ошибка или нет */}
-			<Content error={errorMessage}>
+		<PrivateContent access={[ROLE.ADMIN]} serverError={errorMessage}>
+			<div className={className}>
 				<H2>Пользователи</H2>
 				<div>
 					{/* TableRow - это в разметке строка с надписями Логин Дата регистрации и Роль */}
@@ -82,8 +98,8 @@ const UsersContainer = ({ className }) => {
 						/>
 					))}
 				</div>
-			</Content>
-		</div>
+			</div>
+		</PrivateContent>
 	);
 };
 

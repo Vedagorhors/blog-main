@@ -29,7 +29,7 @@ export const authorize = async (authLogin, authPassword) => {
 	// после деструктуризации user можно упростить запись, например вместо id: user.id писать просто id: id, но когда у ключа и его значения совпадает имя, то пишем еще проще просто id
 	const sessionHash = await sessions.create(user);
 
-	console.log('Авторизация успешна, хэш сессии:', sessionHash);
+	// console.log('Авторизация успешна, хэш сессии:', sessionHash);
 
 	return {
 		error: null,

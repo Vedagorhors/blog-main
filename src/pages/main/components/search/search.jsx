@@ -6,6 +6,7 @@ const SearchContainer = ({ className, searchPhrase, onChange }) => {
 	return (
 		<div className={className}>
 			<Input
+				name="search"
 				value={searchPhrase}
 				placeholder="Поиск по заголовкам..."
 				onChange={onChange}

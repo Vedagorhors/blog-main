@@ -1,7 +1,7 @@
 import { Pagination, PostCard, Search } from './components';
 import { useEffect, useMemo, useState } from 'react';
 import { useServerRequest } from '../../hooks';
-import { PAGINATION_LIMIT } from '../../bff/constants';
+import { PAGINATION_LIMIT } from '../../constants';
 import { debounce } from './utils/debounce';
 import styled from 'styled-components';
 

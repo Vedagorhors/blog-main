@@ -23,8 +23,25 @@
 
 import { getComments, getPost, getUsers } from '../api';
 export const fetchPost = async (postId) => {
-	// 	// делаем запрос в базу данных и передаем туда postId
-	const post = await getPost(postId);
+	// перехватываем ошибку с помощью catch
+	let post;
+	let error;
+
+	try {
+		// делаем запрос в базу данных и передаем туда postId
+		post = await getPost(postId);
+	} catch (postError) {
+		error = postError;
+	}
+
+	// если есть ошибка, значит нет response
+	if (error) {
+		return {
+			error,
+			res: null,
+		};
+	}
+
 	// получаем все комментарии
 	const comments = await getComments(postId);
 	// Получим юзеров, чтобы опередлить какому юзеру принадлежит комментарий
@@ -41,6 +58,7 @@ export const fetchPost = async (postId) => {
 
 	// console.log(commentsWithAuthor);
 
+	// в res (это responce) мы отправляем данные о посте (статье), а ошибка null
 	return {
 		error: null,
 		res: {

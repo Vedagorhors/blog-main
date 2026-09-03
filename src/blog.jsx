@@ -1,9 +1,10 @@
 import { useLayoutEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Header, Footer, Modal } from './components';
+import { Error, Header, Footer, Modal } from './components';
 import { Authorization, Main, Post, Registration, Users } from './pages';
 import { setUser } from './actions';
+import { ERROR } from './constants';
 import styled from 'styled-components'; // вместо CSS-модулей здесь будем использовать Styled-components, просто для примера, потому что ранее в уроках мы использовали только css-модули
 
 const AppColumn = styled.div`
@@ -68,10 +69,12 @@ export const Blog = () => {
 					<Route path="/register" element={<Registration />} />
 					<Route path="/users" element={<Users />} />
 					{/* Для страницы новой статьи также используем {<Post />}. Нам это тоже подойдет, мы его же использовали и для редактирования статьи. А подойдет, потому что Новая статья также похожа на страницу редактирования, только начинаем мы не сзаполненных полей, а с пустых */}
+					{/* Если в браузере задать ошибочный путь к статье, например http://localhost:5173/post/hjk , то сработает наш роутинг и он подумал, что hjk это id какой-то статьи и поэтому страница открылась без ошибки, то есть мы не попали по роутингу на страницу с ошибкой, как указано в последней строке роутинга {<div>Ошибка</div>}, а мы попали на строку "/post/:id" и вот этот случай нужно обработать, далее изменяем компонент Post */}
 					<Route path="/post" element={<Post />} />
 					<Route path="/post/:id" element={<Post />} />
 					<Route path="/post/:id/edit" element={<Post />} />
-					<Route path="*" element={<div>Ошибка</div>} />
+					{/* <Route path="*" element={<div>Ошибка</div>} /> - мы сделали компонент Error потом и теперь его здесь используем: */}
+					<Route path="*" element={<Error error={ERROR.PAGE_NOT_EXIST} />} />
 				</Routes>
 			</Page>
 			<Footer />

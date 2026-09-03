@@ -52,6 +52,8 @@ export const sessions = {
 		// сессия теперь есть, из неё мы получим user и hash. Получаем пользователя с помощью getUser. getUser делаем по хэшу
 		const dbSession = await getSession(hash);
 		// console.log('access', hash, accessRoles, dbSession);
+		console.log(hash, dbSession);
+
 		// const user = this.list[hash]; - теперь не нужно
 
 		// // Получаем пользователя
@@ -69,7 +71,8 @@ export const sessions = {
 		// includes(user.roleId)
 		// includes возвращает либо true либо false
 		// у меня была ошибка - вместо страницы Пользователи для ivan (ADMIN) отображалась Ошибка Доступ запрещен. Я вместо return !!user && !accessRoles.includes(user.roleId) написал так:
-		return !!dbSession.user && accessRoles.includes(dbSession.user.roleId);
+		// если пользователь не нашелся такой из сессии, то значит и сессии нет и нет доступа. Но если пользователь существует, то мы можем у него роль считать
+		return !!dbSession?.user && accessRoles.includes(dbSession.user.roleId);
 	},
 
 	// if (!user) {

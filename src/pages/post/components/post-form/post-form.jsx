@@ -85,11 +85,13 @@ const PostFormContainer = ({
 
 			{/* Inputы переделываем под управляемые элементы для картинки и заголовка: */}
 			<Input
+				name="imageUrl"
 				value={imageUrlValue}
 				placeholder="Изображение..."
 				onChange={onImageChange}
 			/>
 			<Input
+				name="title"
 				value={titleValue}
 				placeholder="Заголовок..."
 				onChange={onTitleChange}
