@@ -72,6 +72,7 @@ const PostContainer = ({ className }) => {
 		// когда идет загрузка, то возвращаем null, то есть ничего не отображаем - пустая страница пока идет загрузка. А завершаем загрузку, когда dispatch(loadPostAsync... отрабатывает.
 		return null;
 	}
+
 	// создадим пост без ошибки - специфическая страница статьи SpecificPostPage
 	const SpecificPostPage =
 		isCreating || isEditing ? (

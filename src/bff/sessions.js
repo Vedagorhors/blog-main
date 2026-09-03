@@ -52,7 +52,7 @@ export const sessions = {
 		// сессия теперь есть, из неё мы получим user и hash. Получаем пользователя с помощью getUser. getUser делаем по хэшу
 		const dbSession = await getSession(hash);
 		// console.log('access', hash, accessRoles, dbSession);
-		console.log(hash, dbSession);
+		// console.log(hash, dbSession);
 
 		// const user = this.list[hash]; - теперь не нужно
 

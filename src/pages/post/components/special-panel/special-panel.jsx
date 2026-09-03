@@ -1,15 +1,19 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { CLOSE_MODAL, openModal, removePostAsync } from '../../../../actions';
 import { Icon } from '../../../../components';
 import { useServerRequest } from '../../../../hooks';
+import { checkAccess } from '../../../../utils';
+import { selectUserRole } from '../../../../selectors';
+import { ROLE } from '../../../../constants';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 
 // индексировать (делать реэкспорт) не будем, потому что этот компонент не предназначен для использования извне этой папки components. Это компонент для того, чтобы его использовали его соседи, а они его будут использовать через прямой импорт, а не через индексированный для того, чтобы не появилась проблема с циклическими зависимостями
 const SpecialPanelContainer = ({ className, id, publishedAt, editButton }) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const requestServer = useServerRequest();
+	const userRole = useSelector(selectUserRole);
 	// Удаление статьи с помощью экшена (action) removePostAsync
 	const onPostRemove = (id) => {
 		// мы здесь должны открыть модальное окно. Ниже применим экшены, которые после этого создадим в отдельных файлах
@@ -39,6 +43,10 @@ const SpecialPanelContainer = ({ className, id, publishedAt, editButton }) => {
 	};
 	// Создадим этот экшен removePostAsync. Создадим новый файл remove-post-async.js а также нужно реализовать операцию и обращение к базе данных
 
+	// Чтобы мы на странице статьи могли скрывать или отображать кнопки, необходимо сначала проверить доступ пользователя в зависимости от его роли. isAdmin - проверка, что пользователь является админом. Используем утилиту checkAccess и передаем в неё роль ADMIN и текущую роль пользователя roleId
+	// roleId заменяем на userRole (это одно и тоже)
+	const isAdmin = checkAccess([ROLE.ADMIN], userRole);
+
 	return (
 		<div className={className}>
 			<div className="published-at">
@@ -54,7 +62,8 @@ const SpecialPanelContainer = ({ className, id, publishedAt, editButton }) => {
 				{publishedAt}
 			</div>
 			{/* панель с кнопками в статье. Кнопка удаления будет одинаковой, а кнопка сохранения fa-floppy-o будет меняться, её нужно будет указывать, поэтому сделаем её через пропсы */}
-			<div className="buttons">
+			{isAdmin && (
+				<div className="buttons">
 				{/* Теперь Icon мы обработали и сюда вставляем просто editButton. В файле post-content эта иконда будет fa-pencil-square-o, то есть кнопка для редактирования с карандашом, а в файле post-form эта иконка будет как fa-floppy-o, то есть кнопка для сохранения отредактируемой статьи */}
 				{editButton}
 				{/* <Icon
@@ -73,6 +82,8 @@ const SpecialPanelContainer = ({ className, id, publishedAt, editButton }) => {
 					/>
 				)}
 			</div>
+		)}
+
 		</div>
 	);
 };

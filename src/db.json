@@ -11,8 +11,15 @@
       "login": "anton",
       "password": "q1w2e3",
       "registed_at": "2038-07-28 08:18",
-      "role_id": 2,
+      "role_id": 1,
       "id": "lby3NnbDMXs"
+    },
+    {
+      "login": "petr",
+      "password": "q1w2e3",
+      "registed_at": "2054-08-17 16:23",
+      "role_id": 2,
+      "id": "HcWtT-NQ3Pk"
     }
   ],
   "roles": [
@@ -148,7 +155,7 @@
       "id": "oA75hkLNa54"
     },
     {
-      "hash": "smtl61dz6t5rbs4qfeaa",
+      "hash": "smtlixkmihtvt4no07sc",
       "user": {
         "id": "001",
         "login": "ivan",
@@ -156,7 +163,7 @@
         "registeredAt": "2050-09-22",
         "roleId": 0
       },
-      "id": "FjI-5M31m50"
+      "id": "d9OZzyZS7kg"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

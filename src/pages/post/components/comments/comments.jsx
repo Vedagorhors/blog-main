@@ -3,13 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Icon } from '../../../../components';
 import { Comment } from './components';
 import { useServerRequest } from '../../../../hooks';
-import { selectUserId } from '../../../../selectors';
+import { selectUserId, selectUserRole } from '../../../../selectors';
 import { addCommentAsync } from '../../../../actions';
+import { ROLE } from '../../../../constants';
 import styled from 'styled-components';
 
 const CommentsContainer = ({ className, comments, postId }) => {
 	const [newComment, setNewComment] = useState('');
 	const userId = useSelector(selectUserId);
+	const userRole = useSelector(selectUserRole);
 	const dispatch = useDispatch();
 	const requestServer = useServerRequest();
 
@@ -19,24 +21,30 @@ const CommentsContainer = ({ className, comments, postId }) => {
 		setNewComment('');
 	};
 
+	// Нужно скрыть комментарии в статье для гостя. Если гость, то скрываем комменты. Смотрим что роль равна гостю
+	const isGuest = userRole === ROLE.GUEST;
+
 	return (
 		// Каждый комментарий делаем отдельным компонентом
 		<div className={className}>
-			<div className="new-comment">
-				<textarea
-					name="comment"
-					value={newComment}
-					placeholder="Комментарий..."
-					onChange={({ target }) => setNewComment(target.value)}
-				></textarea>
-				<Icon
-					id="fa-paper-plane-o"
-					margin="0 0 0 10px"
-					size="18px"
-					// Нажимаем на кнопку самолетика и тем самым добавляем комментарий на страницу
-					onClick={() => onNewCommentAdd(userId, postId, newComment)}
-				/>
-			</div>
+			{/* проеряем - если не Гость, то смотрит комментарии */}
+			{!isGuest && (
+				<div className="new-comment">
+					<textarea
+						name="comment"
+						value={newComment}
+						placeholder="Комментарий..."
+						onChange={({ target }) => setNewComment(target.value)}
+					></textarea>
+					<Icon
+						id="fa-paper-plane-o"
+						margin="0 0 0 10px"
+						size="18px"
+						// Нажимаем на кнопку самолетика и тем самым добавляем комментарий на страницу
+						onClick={() => onNewCommentAdd(userId, postId, newComment)}
+					/>
+				</div>
+			)}
 			<div className="comments">
 				{comments.map(({ id, author, content, publishedAt }) => (
 					<Comment

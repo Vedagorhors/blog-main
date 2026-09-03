@@ -1,8 +1,9 @@
 // Операция по удалению статьи. Напишем её на основе кода из файла remove-post-comment.js
 
-import { deleteComment, getComments, getPost } from '../api';
+import { deleteComment, getPost } from '../api';
 import { sessions } from '../sessions';
 import { ROLE } from '../constants';
+import { getPostCommentsWithAuthor } from '../utils';
 
 // removePostComment - функция удаления комментария из статьи
 export const removePostComment = async (hash, postId, id) => {
@@ -29,9 +30,13 @@ export const removePostComment = async (hash, postId, id) => {
 	// загружаю статью (post)
 	const post = await getPost(postId);
 
-	// подгружаем обновленные комментарии
-	const comments = await getComments(postId);
-	// const users = await getUsers();
+	// получаем все комментарии
+	// const comments = await getComments(postId); // - это уже есть в отдельной утилите getPostCommentsWithAuthor
+	// Получим юзеров, чтобы опередлить какому юзеру принадлежит комментарий
+	// const users = await getUsers(); // - это уже есть в отдельной утилите getPostCommentsWithAuthor
+
+	// получим комментарии с автором с помощью вынесенной в отдульную утилиту функции getPostCommentsWithAuthor
+	const commentsWithAuthor = await getPostCommentsWithAuthor(postId);
 
 	// Возвращаем обновленные данные о посте
 	// await getPost(postId);
@@ -41,7 +46,7 @@ export const removePostComment = async (hash, postId, id) => {
 		error: null,
 		res: {
 			...post,
-			comments,
+			comments: commentsWithAuthor,
 		},
 	};
 };

@@ -1,7 +1,9 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Icon } from '../../../../../../components';
 import { useServerRequest } from '../../../../../../hooks';
 import { openModal, CLOSE_MODAL, removeCommentAsync } from '../../../../../../actions';
+import { selectUserRole } from '../../../../../../selectors';
+import { ROLE } from '../../../../../../constants';
 import styled from 'styled-components';
 
 const CommentContainer = ({ className, postId, id, author, publishedAt, content }) => {
@@ -9,6 +11,7 @@ const CommentContainer = ({ className, postId, id, author, publishedAt, content 
 	const dispatch = useDispatch();
 	// нужно добавить requestServer c помощью хука
 	const requestServer = useServerRequest();
+	const userRole = useSelector(selectUserRole);
 
 	// Удаление комментария с помощью экшена (action) removeCommentAsync
 	const onCommentRemove = (id) => {
@@ -33,7 +36,12 @@ const CommentContainer = ({ className, postId, id, author, publishedAt, content 
 		// этот коллбык перносим выше в onConfirm.
 		// dispatch(removeCommentAsync(requestServer, postId, id));
 	};
+	// console.log(author);
+
 	// Создадим этот экшен. Создадим новый файл remove-comment-async.js
+
+	// Чтобы скрывать кнопку удаления в зависимости от роли, введем проверку Админ или модератор. Проверяем includes для userRole. userRole в данном файле нет, поэтому нужно её получить с помощью useSelector (см. выше)
+	const isAdminOrModerator = [ROLE.ADMIN, ROLE.MODERATOR].includes(userRole);
 
 	return (
 		<div className={className}>
@@ -62,13 +70,16 @@ const CommentContainer = ({ className, postId, id, author, publishedAt, content 
 				</div>
 				<div className="comment-text">{content}</div>
 			</div>
-			<Icon
-				id="fa-trash-o"
-				size="21px"
-				margin="0 0 0 10px"
-				// по нажатию на удаление комментария мы теперь должны отправлять экшен, который откроет модальное окно и в этом окне мы передадим текст: Удалить комментарий? А для этого нужно создать еще несколько экшенов. Далее смотри выше в onCommentRemove
-				onClick={() => onCommentRemove(id)}
-			/>
+			{/* здесь проверяем теперь - если юзер админ или модератор, то показываем кнопку удаления комментария, а для других не показываем */}
+			{isAdminOrModerator && (
+				<Icon
+					id="fa-trash-o"
+					size="21px"
+					margin="0 0 0 10px"
+					// по нажатию на удаление комментария мы теперь должны отправлять экшен, который откроет модальное окно и в этом окне мы передадим текст: Удалить комментарий? А для этого нужно создать еще несколько экшенов. Далее смотри выше в onCommentRemove
+					onClick={() => onCommentRemove(id)}
+				/>
+			)}
 		</div>
 	);
 };

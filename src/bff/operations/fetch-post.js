@@ -21,7 +21,9 @@
 
 // Переписал код ниже. Изменения: дописал getUsers в импорт, добавил строку const users = await getUsers(); и обернул comments в .map(...), чтобы к каждому комментарию добавить author — логин автора вместо authorId.
 
-import { getComments, getPost, getUsers } from '../api';
+import { getPost } from '../api';
+import { getPostCommentsWithAuthor } from '../utils';
+
 export const fetchPost = async (postId) => {
 	// перехватываем ошибку с помощью catch
 	let post;
@@ -43,18 +45,12 @@ export const fetchPost = async (postId) => {
 	}
 
 	// получаем все комментарии
-	const comments = await getComments(postId);
+	// const comments = await getComments(postId); // - это уже есть в отдельной утилите getPostCommentsWithAuthor
 	// Получим юзеров, чтобы опередлить какому юзеру принадлежит комментарий
-	const users = await getUsers();
+	// const users = await getUsers(); // - это уже есть в отдельной утилите getPostCommentsWithAuthor
 
-	// получим комментарии с автором
-	const commentsWithAuthor = comments.map((comment) => {
-		const user = users.find(({ id }) => id === comment.authorId);
-		return {
-			...comment,
-			author: user?.login,
-		};
-	});
+	// получим комментарии с автором с помощью вынесенной в отдульную утилиту функции getPostCommentsWithAuthor
+	const commentsWithAuthor = await getPostCommentsWithAuthor(postId);
 
 	// console.log(commentsWithAuthor);
 

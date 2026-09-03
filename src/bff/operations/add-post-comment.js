@@ -1,6 +1,7 @@
-import { addComment, getComments, getPost, getUsers } from '../api';
+import { addComment, getPost } from '../api';
 import { sessions } from '../sessions';
 import { ROLE } from '../constants';
+import { getPostCommentsWithAuthor } from '../utils';
 
 // addPostComment - функция добавления комментария к статье
 export const addPostComment = async (hash, userId, postId, content) => {
@@ -27,33 +28,34 @@ export const addPostComment = async (hash, userId, postId, content) => {
 	// загружаю статью (post)
 	const post = await getPost(postId);
 
-	// подгружаем обновленные комментарии
-	const comments = await getComments(postId);
-	const users = await getUsers();
+	// получаем все комментарии
+	// const comments = await getComments(postId); // - это уже есть в отдельной утилите getPostCommentsWithAuthor
+	// Получим юзеров, чтобы опередлить какому юзеру принадлежит комментарий
+	// const users = await getUsers(); // - это уже есть в отдельной утилите getPostCommentsWithAuthor
 
-	// Возвращаем обновленные данные о посте
-	// await getPost(postId);
+	// получим комментарии с автором с помощью вынесенной в отдульную утилиту функции getPostCommentsWithAuthor
+	const commentsWithAuthor = await getPostCommentsWithAuthor(postId);
 
 	// выводим информацию о статье уже вместе с комментариями
-	// 	return {
-	// 		error: null,
-	// 		res: {
-	// 			...post,
-	// 			comments,
-	// 		},
-	// 	};
-	// };
-
-	// Переписал код ниже. Изменения: дописал getUsers в импорт, добавил строку const users = await getUsers(); и обернул comments в .map(...), чтобы к каждому комментарию добавить author — логин автора вместо authorId.
-
 	return {
 		error: null,
 		res: {
 			...post,
-			comments: comments.map((comment) => ({
-				...comment,
-				author: users.find(({ id }) => id === comment.authorId)?.login,
-			})),
+			comments: commentsWithAuthor,
 		},
 	};
 };
+
+// Переписал код ниже. Изменения: дописал getUsers в импорт, добавил строку const users = await getUsers(); и обернул comments в .map(...), чтобы к каждому комментарию добавить author — логин автора вместо authorId.
+
+// return {
+// 	error: null,
+// 	res: {
+// 		...post,
+// 		comments: comments.map((comment) => ({
+// 			...comment,
+// 			author: users.find(({ id }) => id === comment.authorId)?.login,
+// 		})),
+// 	},
+// };
+// };

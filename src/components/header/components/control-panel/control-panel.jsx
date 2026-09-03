@@ -8,6 +8,7 @@ import {
 	selectUserSession,
 } from '../../../../selectors';
 import { logout } from '../../../../actions';
+import { checkAccess } from '../../../../utils';
 import styled from 'styled-components';
 
 // Так как нам потребуется выравнивать кнопки панели управления по правому краю, то создадим компонент для стилизации
@@ -59,6 +60,9 @@ const ControlPanelContainer = ({ className }) => {
 		sessionStorage.removeItem('userData');
 	};
 
+	// Чтобы мы на главной странице могли скрывать или отображать кнопки, необходимо сначала проверить доступ пользователя в зависимости от его роли. isAdmin - проверка, что пользователь является админом. Используем утилиту checkAccess и передаем в неё роль ADMIN и текущую роль пользователя roleId
+	const isAdmin = checkAccess([ROLE.ADMIN], roleId);
+
 	return (
 		<div className={className}>
 			<RightAligned>
@@ -90,12 +94,16 @@ const ControlPanelContainer = ({ className }) => {
 				{/* <StyledIcon> */}
 				<Icon id="fa-backward" margin="10px 0 0 0" onClick={() => navigate(-1)} />
 				{/* </StyledIcon> */}
-				<Link to="/post">
-					<Icon id="fa-file-text-o" margin="10px 0 0 16px" />
-				</Link>
-				<Link to="/users">
-					<Icon id="fa-users" margin="10px 0 0 16px" />
-				</Link>
+				{isAdmin && (
+					<>
+						<Link to="/post">
+							<Icon id="fa-file-text-o" margin="10px 0 0 16px" />
+						</Link>
+						<Link to="/users">
+							<Icon id="fa-users" margin="10px 0 0 16px" />
+						</Link>
+					</>
+				)}
 			</RightAligned>
 		</div>
 	);
