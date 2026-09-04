@@ -56,7 +56,7 @@ const UsersContainer = ({ className }) => {
 			return;
 		}
 
-		console.log('onUserRemove', userId);
+		// console.log('onUserRemove', userId);
 		requestServer('removeUser', userId).then(() => {
 			// console.log('requestServer then');
 			// после того, как мы получили ответ от удаления пользователя делаем так:
