@@ -1,20 +1,16 @@
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-// Чтобы в ...props  не оказались лишние пропсы, то нужно их прописать отдельно, как здесь inactive. теперь inactive не записывается в din className, где он не используется. Ведь ...props - означает все оставшиеся, не перечисленные вручную пропсы.
-const IconContainer = ({ className, id, inactive, ...props }) => (
+const IconContainer = ({ className, id, inactive: _inactive, ...props }) => (
 	<div className={className} {...props}>
 		<i className={`fa ${id}`} aria-hidden="true"></i>
 	</div>
 );
 
-// Чтобы задать размер для иконки необходимо создать стилизованный компонент
 export const Icon = styled(IconContainer)`
 	font-size: ${({ size = '24px' }) => size};
 	margin: ${({ margin = '0' }) => margin};
-	// делаем иконку сохранения (дискету) приглушенного неактивного цвета, если установлен запрет показа иконки disabled (см. файл user-row.jsx). То есть если disabled, то иконка бледносерого цвета, а если нет, то черного цвета, то есть иконка активна, что значит администратор выбрал другую роль и теперь унжно её сохранить
 	color: ${({ disabled }) => (disabled ? '#ccc' : '#000')};
-	// Сделаем, чтобы на иконке календаря не было курсора руки, а просто стрелка, потому что это просто иконка и на неё нажимать не нужно, это не кнопка. Теперь у нас по умолчанию будет рука (pointer), а там где нужна стрелка (default) мы ставим не активно inactive. Теперь в файле special-panel.jsx (здесь и иконка пользователя не кнока, поэтому для "fa-user-circle-o" тоже ставим inactive={true}) и в comment.jsx для иконки календаря впишем флаг inactive={true}, то есть если inactive={true}, то будет иконка стрелки, в остальных иконках ничего не пишем и там по умолчанию будет рука
 	&:hover {
 		cursor: ${({ inactive }) => (inactive ? 'default' : 'pointer')};
 	}

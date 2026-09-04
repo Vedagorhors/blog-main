@@ -1,4 +1,3 @@
-// Добавим новый комментарий в базу данных в db.json. Выполним запрос для записи с методом POST. То есть на страницу в comments  мы добавляем новые данные body...
 import { generateDate } from '../utils';
 
 export const addComment = (userId, postId, content) =>

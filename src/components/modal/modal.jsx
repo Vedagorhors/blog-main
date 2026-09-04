@@ -1,4 +1,3 @@
-// Компонент модульного окна
 import { useSelector } from 'react-redux';
 import { Button } from '../button/button';
 import {
@@ -9,16 +8,12 @@ import {
 } from '../../selectors';
 import styled from 'styled-components';
 
-// ModalContainer будет возвращать разметку модального окна. Сначала будет подкладка, то есть фон overlay. Затем созадим коробку с информацией box в которой будет заголовок h3 с вопросом {text} Дальше идет блок кнопок buttons
-// здесь пропсов не будет, так как модальное окно будет в самом корне приложения, а вызывать мы его будем из глубины, поэтому пропсы здесь не подходят
 const ModalContainer = ({ className }) => {
-	// сделаем так, чтобы окно открывалось и закрывалось. Селекторы должны доставать данные из стейта
 	const isOpen = useSelector(selectModalIsOpen);
 	const text = useSelector(selectModalText);
 	const onConfirm = useSelector(selectModalOnConfirm);
 	const onCancel = useSelector(selectModalOnCancel);
 
-	// Сделаем условный рендеринг. Если модальное окно закрыто, то мы ничего не отображаем. Ну а если окно открыто, то отображаем разметку. Настроим управление - открытие и закрытие окна, соответственно отправляя экшены в redux store
 	if (!isOpen) {
 		return null;
 	}
@@ -27,7 +22,7 @@ const ModalContainer = ({ className }) => {
 		<div className={className}>
 			<div className="overlay"></div>
 			<div className="box">
-				{/* текст будем брать из redux store. Отправляем мы его из комментария, файл comment.js */}
+				{}
 				<h3>{text}</h3>
 				<div className="buttons">
 					<Button width="120px" onClick={onConfirm}>
@@ -79,5 +74,3 @@ export const Modal = styled(ModalContainer)`
 		margin: 0 5px;
 	}
 `;
-
-// модальное окно также используем в корневом компоненте в blog.jsx

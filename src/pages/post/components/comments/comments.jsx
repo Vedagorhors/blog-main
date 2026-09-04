@@ -18,17 +18,14 @@ const CommentsContainer = ({ className, comments, postId }) => {
 
 	const onNewCommentAdd = (userId, postId, content) => {
 		dispatch(addCommentAsync(requestServer, userId, postId, content));
-		// Сброс поля ввода комментария. Нам нужно обнулить содержимое в поле ввода комментария
 		setNewComment('');
 	};
 
-	// Нужно скрыть комментарии в статье для гостя. Если гость, то скрываем комменты. Смотрим что роль равна гостю
 	const isGuest = userRole === ROLE.GUEST;
 
 	return (
-		// Каждый комментарий делаем отдельным компонентом
 		<div className={className}>
-			{/* проеряем - если не Гость, то смотрит комментарии */}
+			{}
 			{!isGuest && (
 				<div className="new-comment">
 					<textarea
@@ -41,7 +38,6 @@ const CommentsContainer = ({ className, comments, postId }) => {
 						id="fa-paper-plane-o"
 						margin="0 0 0 10px"
 						size="18px"
-						// Нажимаем на кнопку самолетика и тем самым добавляем комментарий на страницу
 						onClick={() => onNewCommentAdd(userId, postId, newComment)}
 					/>
 				</div>
@@ -80,7 +76,6 @@ export const Comments = styled(CommentsContainer)`
 	}
 `;
 
-// comments - это массив из комментариев. Используем созданную константу COMMENT
 Comments.propTypes = {
 	comments: PropTypes.arrayOf(PROP_TYPE.COMMENT).isRequired,
 	postId: PropTypes.string.isRequired,

@@ -1,7 +1,6 @@
 import { ACTION_TYPE } from '../actions';
 
 const initialPostState = {
-	// здесь будет post. Зададим начальные данные для статьи здесь. Наименования возьмем из файла README.md (Схема для redux store (на клиенте))
 	id: '',
 	title: '',
 	imageUrl: '',
@@ -11,17 +10,13 @@ const initialPostState = {
 };
 
 export const postReducer = (state = initialPostState, action) => {
-	// console.log('postReducer', state, action);
-
 	switch (action.type) {
 		case ACTION_TYPE.SET_POST_DATA:
-			// console.log('postReducer', state, action);
 			return {
 				...state,
 				...action.payload,
 			};
 		case ACTION_TYPE.RESET_POST_DATA:
-			// при сбросе данных статьи мы будем записывать в стейт статьи исходные параметры initialPostState
 			return initialPostState;
 		default:
 			return state;

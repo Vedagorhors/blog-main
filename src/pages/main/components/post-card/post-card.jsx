@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Icon } from '../../../../components';
 import styled from 'styled-components';
 
-// Компонент карточки отдельной статьи
 const PostCardContainer = ({
 	className,
 	id,
@@ -12,17 +11,16 @@ const PostCardContainer = ({
 	publishedAt,
 	commentsCount,
 }) => {
-	// возвращаем разметку одной статьи
 	return (
 		<div className={className}>
-			{/* обернем всё в ссылку Link */}
+			{}
 			<Link to={`/post/${id}`}>
 				<img src={imageUrl} alt={title} />
 				<div className="post-card-footer">
 					<h4>{title}</h4>
 					<div className="post-card-info">
 						<div className="published-at">
-							{/* делаем иконку календаря и иконку облачка типа подсчет комментариев */}
+							{}
 							<Icon
 								inactive={true}
 								id="fa-calendar-o"
@@ -46,8 +44,6 @@ const PostCardContainer = ({
 		</div>
 	);
 };
-
-// Подключим Main в файле blog.jsx
 
 export const PostCard = styled(PostCardContainer)`
 	display: flex;

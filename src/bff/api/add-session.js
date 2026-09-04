@@ -1,5 +1,3 @@
-// Добавляем сохраняем сессию
-
 export const addSession = (hash, user) =>
 	fetch('http://localhost:3005/sessions', {
 		method: 'POST',
@@ -11,5 +9,3 @@ export const addSession = (hash, user) =>
 			user,
 		}),
 	});
-
-// теперь сделаем три обращения ADD, GET и REMOVE
