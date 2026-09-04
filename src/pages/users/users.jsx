@@ -65,9 +65,9 @@ const UsersContainer = ({ className }) => {
 							login={login}
 							registeredAt={registeredAt}
 							roleId={roleId}
-							roles={roles.filter(
-								({ id: roleId }) => roleId !== ROLE.GUEST,
-							)}
+						roles={roles.filter(
+							({ id: roleId }) => Number(roleId) !== ROLE.GUEST,
+						)}
 							onUserRemove={() => onUserRemove(id)}
 						/>
 					))}
@@ -82,6 +82,6 @@ export const Users = styled(UsersContainer)`
 	flex-direction: column;
 	align-items: center;
 	margin: 0 auto;
-	wight: 570px;
+	width: 570px;
 	font-size: 18px;
 `;
