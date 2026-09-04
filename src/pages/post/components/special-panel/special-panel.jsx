@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { CLOSE_MODAL, openModal, removePostAsync } from '../../../../actions';
@@ -64,26 +65,25 @@ const SpecialPanelContainer = ({ className, id, publishedAt, editButton }) => {
 			{/* панель с кнопками в статье. Кнопка удаления будет одинаковой, а кнопка сохранения fa-floppy-o будет меняться, её нужно будет указывать, поэтому сделаем её через пропсы */}
 			{isAdmin && (
 				<div className="buttons">
-				{/* Теперь Icon мы обработали и сюда вставляем просто editButton. В файле post-content эта иконда будет fa-pencil-square-o, то есть кнопка для редактирования с карандашом, а в файле post-form эта иконка будет как fa-floppy-o, то есть кнопка для сохранения отредактируемой статьи */}
-				{editButton}
-				{/* <Icon
+					{/* Теперь Icon мы обработали и сюда вставляем просто editButton. В файле post-content эта иконда будет fa-pencil-square-o, то есть кнопка для редактирования с карандашом, а в файле post-form эта иконка будет как fa-floppy-o, то есть кнопка для сохранения отредактируемой статьи */}
+					{editButton}
+					{/* <Icon
 					id="fa-floppy-o"
 					size="21px"
 					margin="0 10px 0 0"
 					onClick={() => {}}
 				/> */}
-				{/* Чтобы иконка корзины не отображалась на странице создания статьи, так как статья еще не опубликована и удалять нечего, то сделаем так - иконку показываем только, если в publishedAt что-то имеется. Получается если есть дата публикации, значит статья существует и её можно удалить */}
-				{publishedAt && (
-					<Icon
-						id="fa-trash-o"
-						size="21px"
-						margin="0 0 0 7px"
-						onClick={() => onPostRemove(id)}
-					/>
-				)}
-			</div>
-		)}
-
+					{/* Чтобы иконка корзины не отображалась на странице создания статьи, так как статья еще не опубликована и удалять нечего, то сделаем так - иконку показываем только, если в publishedAt что-то имеется. Получается если есть дата публикации, значит статья существует и её можно удалить */}
+					{publishedAt && (
+						<Icon
+							id="fa-trash-o"
+							size="21px"
+							margin="0 0 0 7px"
+							onClick={() => onPostRemove(id)}
+						/>
+					)}
+				</div>
+			)}
 		</div>
 	);
 };
@@ -106,3 +106,9 @@ export const SpecialPanel = styled(SpecialPanelContainer)`
 		top: -1px;
 	}
 `;
+
+SpecialPanel.propTypes = {
+	id: PropTypes.string.isRequired,
+	publishedAt: PropTypes.string.isRequired,
+	editButton: PropTypes.node.isRequired,
+};

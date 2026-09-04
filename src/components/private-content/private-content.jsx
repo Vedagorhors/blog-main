@@ -1,11 +1,12 @@
 // Создадим компонент Content ошибки с доступом и будем использовать его на каждой странице, где нам требуется управлять доступом. А для страницы авторизации и регистрации управление доступом не требуется.
 // Этот компонент проверяет доступ и делает это до обращения к серверу.
 
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Error } from '../error/error';
 import { selectUserRole } from '../../selectors';
-import { ERROR } from '../../constants';
 import { checkAccess } from '../../utils';
+import { ERROR, PROP_TYPE } from '../../constants';
 
 // в компонент Error передаем ошибку error для отображения
 export const PrivateContent = ({ children, access, serverError = null }) => {
@@ -21,4 +22,11 @@ export const PrivateContent = ({ children, access, serverError = null }) => {
 
 	// также к нам приходит ошибка от сервера serverError. Отдаем приоритет ошибке из сервера
 	return error ? <Error error={error} /> : children;
+};
+
+// взяли типизацию из файла prop-type.js константы ROLE и ERROR
+PrivateContent.propTypes = {
+	children: PropTypes.node.isRequired,
+	access: PropTypes.arrayOf(PROP_TYPE.ROLE_ID).isRequired,
+	serverError: PROP_TYPE.ERROR,
 };

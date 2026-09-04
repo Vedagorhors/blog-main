@@ -1,6 +1,6 @@
 // Здесь будет логика по работе с одним юзером. Мы сможем для него сохранять новую роль и удалять его
 // Компонент UserRow будет запрашиваться много раз. Сколько пользователей, столько и строк позователей. Было бы не правильно вызывать запрос списка ролей для каждого пользователя отдельно. Ведь общий список он один и тот же. Поэтому будет корректнее разместить этот запрос где-то наверху и передать вниз через пропсы. Так и сделаем это в компоненте users.js
-
+import PropTypes from 'prop-types';
 import { Icon } from '../../../../components';
 // здесь мы импортируем TableRow именно из своей папки table-row, потому что какая у нас структура здесь - у нас есть папка users, в ней подпапка components и в ней два компонента файлы table-row  и user-row. Вот в компоненте Users в файле users.jsx  мы их оба используем. Получается что оба эти компонента являются дочерними для users и здесь мы можем смело их импортировать с помощью индексирования папки (с использованием index.js, где мы их реэкспортировали), вот так: import { TableRow, UserRow } from './components';
 // НО здесь в user-row мы используем TableRow, но в разметке в файле здесь он является дочерним, потому что он используется здесь. А вот в структуре файлов он уже не является дочерним для UserRow, он является соседним, так как расположен по соседству на одном уровне и если мы его импортируем тоже из папки from './components' индексированной с помощью index.js, то получитися так, что импортируя фактически файлик index.js мы будем также еще и импортировать самого себя (так как в index.js реэкспортируются оба компонента TableRow и UserRow) и это может привести к циклической зависимости и приложение зависнет. Поэтому здесь мы импортируем напрямую из компонента, а не из папки индексирования и это делается для того, чтобы случчайно не импортировать самого себя.
@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { TableRow } from '../table-row/table-row';
 import { useServerRequest } from '../../../../hooks';
 import styled from 'styled-components';
+import { PROP_TYPE } from '../../../../constants';
 
 const UserRowContainer = ({
 	className,
@@ -96,3 +97,12 @@ export const UserRow = styled(UserRowContainer)`
 		font-size: 16px;
 	}
 `;
+
+UserRow.propTypes = {
+	id: PropTypes.string.isRequired,
+	login: PropTypes.string.isRequired,
+	registeredAt: PropTypes.string.isRequired,
+	roleId: PROP_TYPE.ROLE_ID.isRequired,
+	roles: PropTypes.arrayOf(PROP_TYPE.ROLE).isRequired,
+	onUserRemove: PropTypes.func.isRequired,
+};

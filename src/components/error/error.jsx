@@ -1,6 +1,9 @@
 // Создадим компонент Error (скопировали код с подобного файла content.jsx)
+
+// import PropTypes from 'prop-types'; // - так как мы отдельно сделали константу с типизацией, то здесь не понадобился этот импорт
 import { H2 } from '../h2/h2';
 import styled from 'styled-components';
+import { PROP_TYPE } from '../../constants';
 
 const Div = styled.div`
 	display: flex;
@@ -19,4 +22,8 @@ export const Error = ({ error }) =>
 		</Div>
 	);
 
+Error.propTypes = {
+	// взяли типизацию из файла prop-type.js константы ERROR
+	error: PROP_TYPE.ERROR,
+};
 //этот компонент Error будем теперь использовать и в файле content.jsx

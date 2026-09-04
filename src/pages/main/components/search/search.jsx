@@ -1,5 +1,6 @@
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Icon, Input } from '../../../../components';
+import styled from 'styled-components';
 
 // Компонент Search - поиск на главной странице
 const SearchContainer = ({ className, searchPhrase, onChange }) => {
@@ -35,3 +36,8 @@ export const Search = styled(SearchContainer)`
 `;
 
 // Теперь нужно вписать в импорт в компоненте главной страницы в файле main.jsx
+
+Search.propTypes = {
+	searchPhrase: PropTypes.string.isRequired,
+	onChange: PropTypes.func.isRequired,
+};

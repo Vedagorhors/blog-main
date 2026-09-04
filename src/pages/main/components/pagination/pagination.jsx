@@ -2,8 +2,9 @@
 // JSON сервер позволяет использовать Пагинацию. На сайте github.com/typicode/json-server#paginate написано про пагинацию и оттуда мы возьмем необходимы данные как использовать пагинацию в нашем случае
 // // часть кода пагинации пишем в файле fetch-posts.js в запросе статей, а точнее в файле get-posts.js. В файле main.jsx мы должны передать страницу page  и limit (количество статей на странице). Также создали константу в файле pagination-limit.js в папке constants
 
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Button } from '../../../../components';
+import styled from 'styled-components';
 
 const PaginationContainer = ({ className, page, lastPage, setPage }) => {
 	return (
@@ -52,3 +53,9 @@ export const Pagination = styled(PaginationContainer)`
 		border: 1px solid #000;
 	}
 `;
+
+Pagination.propTypes = {
+	page: PropTypes.number.isRequired,
+	lastPage: PropTypes.number.isRequired,
+	setPage: PropTypes.func.isRequired,
+};

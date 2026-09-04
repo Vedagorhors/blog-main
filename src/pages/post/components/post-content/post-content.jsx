@@ -1,10 +1,12 @@
 // Это компонент Статьи (без редактирования). На странице будет кнопка редактирования (fa-pencil-square-o) и кнопка удаления fa-trash-o (она одинакова для редактируемой и не редактируемой страницы Статьи), поэтому кнопку удаления перенесли в общий файл управления special-panel.jsx.
 // В общем файле special-panel.jsx для управления файлами post-content и post-form (компонент редактируемой страницы Статьи) используются эти кнопки, то есть общая кнопка удаления одинаковая и принимает как бы для одного и того же места на странице то кнопку редактирования, то кнопку сохранения, то есть одна кнопка будет менять - на странице нередактируемой статьи будет кнопка редактирования, а на странице редактирования статьи на этом же месте будет кнопка сохранения поле редактирования
 
+// import PropTypes from 'prop-types'; // - так как мы отдельно сделали константу с типизацией, то здесь не понадобился этот импорт
 import { useNavigate } from 'react-router-dom';
 import { H2, Icon } from '../../../../components';
 import { SpecialPanel } from '../special-panel/special-panel';
 import styled from 'styled-components';
+import { PROP_TYPE } from '../../../../constants';
 
 const PostContentContainer = ({
 	className,
@@ -73,3 +75,7 @@ export const PostContent = styled(PostContentContainer)`
 		white-space: pre-line;
 	}
 `;
+
+PostContent.propTypes = {
+	post: PROP_TYPE.POST.isRequired,
+};

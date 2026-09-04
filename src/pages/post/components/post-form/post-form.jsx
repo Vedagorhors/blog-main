@@ -1,6 +1,8 @@
 // Компонент: Форма для редактирования статьи. В эту форму будем вносить данные и отправлять их на сервер. Скопируем код с файла post-content.js
 // На странице будет кнопка сохранения (fa-floppy-o) и кнопка удаления fa-trash-o (она одинакова для редактируемой и не редактируемой страницы Статьи), поэтому кнопкку удаления перенесли в общий файл управления special-panel.jsx
 // В общем файле special-panel.jsx для управления файлами post-content и post-form (компонент редактируемой страницы Статьи) используются эти кнопки, то есть общая кнопка удаления одинаковая и принимает как бы для одного и того же места на странице то кнопку редактирования, то кнопку сохранения, то есть одна кнопка будет менять - на странице нередактируемой статьи будет кнопка редактирования, а на странице редактирования статьи на этом же месте будет кнопка сохранения поле редактирования
+
+// import PropTypes from 'prop-types'; // - так как мы отдельно сделали константу с типизацией, то здесь не понадобился этот импорт
 import { useRef, useState } from 'react';
 import { Icon, Input } from '../../../../components';
 import { SpecialPanel } from '../special-panel/special-panel';
@@ -10,6 +12,7 @@ import { useServerRequest } from '../../../../hooks';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { PROP_TYPE } from '../../../../constants';
 
 const PostFormContainer = ({
 	className,
@@ -168,3 +171,7 @@ export const PostForm = styled(PostFormContainer)`
 // <Input defaultValue={title} />) и поэтому подход будет немножко другой.
 // Как же мы будем собирать данные. Мы можем обратиться к этим компонентам как к тэгам (html-элементам), поэтому нужно добавить рефы ref на эти тэги
 // Как это работает. При нажатии на кнопку сохранения мы отправляем данные на сервер. ДЛя отправки данных созадим обработчик onSave
+
+PostForm.propTypes = {
+	post: PROP_TYPE.POST.isRequired,
+};

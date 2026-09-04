@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 // Чтобы в ...props  не оказались лишние пропсы, то нужно их прописать отдельно, как здесь inactive. теперь inactive не записывается в din className, где он не используется. Ведь ...props - означает все оставшиеся, не перечисленные вручную пропсы.
@@ -18,3 +19,8 @@ export const Icon = styled(IconContainer)`
 		cursor: ${({ inactive }) => (inactive ? 'default' : 'pointer')};
 	}
 `;
+
+Icon.propTypes = {
+	id: PropTypes.string.isRequired,
+	inactive: PropTypes.bool,
+};
