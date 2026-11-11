@@ -20,6 +20,20 @@
       "registed_at": "2054-08-17 16:23",
       "role_id": 2,
       "id": "HcWtT-NQ3Pk"
+    },
+    {
+      "login": "Guest",
+      "password": "q1w2e3",
+      "registed_at": "2048-08-14 05:48",
+      "role_id": 2,
+      "id": "a2hCnffAXsI"
+    },
+    {
+      "login": "Dima",
+      "password": "q1w2e3",
+      "registed_at": "2042-04-23 00:27",
+      "role_id": 2,
+      "id": "fBJGQ1MRMBs"
     }
   ],
   "roles": [
@@ -137,9 +151,9 @@
     {
       "author_id": "001",
       "post_id": "002",
-      "published_at": "2052-05-12 22:57",
-      "content": "Первый комментарий 4",
-      "id": "-zDaG8kSAzk"
+      "published_at": "2038-07-18 22:18",
+      "content": "Проверка работы",
+      "id": "NOHpkN2ttn4"
     }
   ],
   "sessions": [
@@ -155,15 +169,81 @@
       "id": "oA75hkLNa54"
     },
     {
-      "hash": "smtlixkmihtvt4no07sc",
+      "hash": "smtmxhzo8r0knkzobl3i",
       "user": {
-        "id": "001",
-        "login": "ivan",
+        "id": "a2hCnffAXsI",
+        "login": "Guest",
         "password": "q1w2e3",
-        "registeredAt": "2050-09-22",
-        "roleId": 0
+        "registeredAt": "2048-08-14 05:48",
+        "roleId": 3
       },
-      "id": "d9OZzyZS7kg"
+      "id": "ZBbk-Mn52GM"
+    },
+    {
+      "hash": "smtmxi0ylhhfe5w0hj45",
+      "user": {
+        "id": "a2hCnffAXsI",
+        "login": "Guest",
+        "password": "q1w2e3",
+        "registeredAt": "2048-08-14 05:48",
+        "roleId": 3
+      },
+      "id": "oJUuEGcGLLU"
+    },
+    {
+      "hash": "smtmxi5wxy6iybsv94",
+      "user": {
+        "id": "a2hCnffAXsI",
+        "login": "Guest",
+        "password": "q1w2e3",
+        "registeredAt": "2048-08-14 05:48",
+        "roleId": 3
+      },
+      "id": "gDQAR3pu9hA"
+    },
+    {
+      "hash": "smtmxikf3bbvkyean7h",
+      "user": {
+        "id": "a2hCnffAXsI",
+        "login": "Guest",
+        "password": "q1w2e3",
+        "registeredAt": "2048-08-14 05:48",
+        "roleId": 3
+      },
+      "id": "5jms26pLPhk"
+    },
+    {
+      "hash": "smtmximo32m3nktwhbor",
+      "user": {
+        "id": "a2hCnffAXsI",
+        "login": "Guest",
+        "password": "q1w2e3",
+        "registeredAt": "2048-08-14 05:48",
+        "roleId": 3
+      },
+      "id": "dvAf59woI5A"
+    },
+    {
+      "hash": "smtmxl4080bxuot46p0fl",
+      "user": {
+        "id": "a2hCnffAXsI",
+        "login": "Guest",
+        "password": "q1w2e3",
+        "registeredAt": "2048-08-14 05:48",
+        "roleId": 3
+      },
+      "id": "VoM2RsZidpI"
+    },
+    {
+      "hash": "smtmxp6nhtqoklw88e6",
+      "user": {
+        "id": "a2hCnffAXsI",
+        "login": "Guest",
+        "password": "q1w2e3",
+        "registeredAt": "2048-08-14 05:48",
+        "roleId": 3
+      },
+      "id": "rcBog6TeqTs"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
