@@ -1,27 +1,33 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { CLOSE_MODAL, openModal, removePostAsync } from '../../../../actions';
 import { Icon } from '../../../../components';
-import { useServerRequest } from '../../../../hooks';
+// import { useServerRequest } from '../../../../hooks';
 import { checkAccess } from '../../../../utils';
 import { selectUserRole } from '../../../../selectors';
 import { ROLE } from '../../../../constants';
 import styled from 'styled-components';
 
 const SpecialPanelContainer = ({ className, id, publishedAt, editButton }) => {
+	const [removeError, setRemoveError] = useState(null);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const requestServer = useServerRequest();
+	// const requestServer = useServerRequest();
 	const userRole = useSelector(selectUserRole);
+
+	// Интеграция фронтенда с бэкендом. Убираем requestServer
 	const onPostRemove = (id) => {
 		dispatch(
 			openModal({
 				text: 'Удалить статью?',
 				onConfirm: () => {
-					dispatch(removePostAsync(requestServer, id)).then(() => {
-						navigate('/');
-					});
+					// dispatch(removePostAsync(requestServer, id)).then(() => {
+					setRemoveError(null);
+					dispatch(removePostAsync(id))
+						.then(() => navigate('/'))
+						.catch((error) => setRemoveError(error.message));
 					dispatch(CLOSE_MODAL);
 				},
 				onCancel: () => dispatch(CLOSE_MODAL),
@@ -33,6 +39,7 @@ const SpecialPanelContainer = ({ className, id, publishedAt, editButton }) => {
 
 	return (
 		<div className={className}>
+			{removeError && <div role="alert">Ошибка удаления: {removeError}</div>}
 			<div className="published-at">
 				{}
 				{publishedAt && (

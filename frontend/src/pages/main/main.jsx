@@ -1,8 +1,8 @@
 import { Pagination, PostCard, Search } from './components';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { useServerRequest } from '../../hooks';
 import { PAGINATION_LIMIT } from '../../constants';
-import { debounce } from './utils/debounce';
+// import { debounce } from './utils/debounce'; — раньше откладывали переключатель shouldSearch.
 import styled from 'styled-components';
 import { request } from '../../utils/request';
 
@@ -11,28 +11,37 @@ const MainContainer = ({ className }) => {
 	const [page, setPage] = useState(1);
 	const [lastPage, setLastPage] = useState(1);
 	const [searchPhrase, setSearchPhrase] = useState('');
-	const [shouldSearch, setShouldSearch] = useState(false);
+	// Вместо переключателя shouldSearch откладываем само значение поискового запроса.
+	const [delayedSearch, setDelayedSearch] = useState('');
+	const [loadResult, setLoadResult] = useState(null);
+	const query = new URLSearchParams({ search: delayedSearch, page, limit: PAGINATION_LIMIT }).toString();
+	const isLoading = loadResult?.query !== query;
+	const error = isLoading ? null : loadResult.error;
+
+	useEffect(() => {
+		const timer = setTimeout(() => setDelayedSearch(searchPhrase), 2000);
+		return () => clearTimeout(timer);
+	}, [searchPhrase]);
 	// const requestServer = useServerRequest();
 	useEffect(() => {
-		// Интеграция фронтеда и бэкенда
-		// requestServer('fetchPosts', searchPhrase, page, PAGINATION_LIMIT).then(
-		request(
-			`/posts?search=${searchPhrase}&page=${page}&limit=${PAGINATION_LIMIT}`,
-		).then(({ data: { posts, lastPage } }) => {
-			setPosts(posts);
-
-			setLastPage(lastPage);
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [page, shouldSearch]);
-	// 	}, [requestServer, page, shouldSearch]);
-
-	const startDelayedSearch = useMemo(() => debounce(setShouldSearch, 2000), []);
+		let active = true;
+		// requestServer('fetchPosts', ...) — прежний вызов через bff.
+		// URLSearchParams сохраняет &, +, # и другие символы внутри поискового значения.
+		request(`/posts?${query}`)
+			.then(({ data }) => {
+				if (!active) return;
+				setPosts(data.posts);
+				setLastPage(data.lastPage);
+				setLoadResult({ query, error: null });
+			})
+			.catch((error) => { if (active) setLoadResult({ query, error: error.message }); });
+		// Ответ предыдущего запроса не должен перезаписать результаты нового поиска.
+		return () => { active = false; };
+	}, [query]);
 
 	const onSearch = ({ target }) => {
 		setSearchPhrase(target.value);
 		setPage(1);
-		startDelayedSearch(!shouldSearch);
 	};
 
 	return (
@@ -40,7 +49,11 @@ const MainContainer = ({ className }) => {
 			<div className="posts-and-search">
 				<Search searchPhrase={searchPhrase} onChange={onSearch} />
 				{}
-				{posts.length > 0 ? (
+				{error ? (
+					<div role="alert">Ошибка загрузки статей: {error}</div>
+				) : isLoading ? (
+					<div role="status">Загрузка статей...</div>
+				) : posts.length > 0 ? (
 					<div className="post-list">
 						{posts.map(({ id, title, imageUrl, publishedAt, comments }) => (
 							<PostCard
@@ -58,7 +71,7 @@ const MainContainer = ({ className }) => {
 				)}
 			</div>
 			{}
-			{lastPage > 1 && posts.length > 0 && (
+			{!error && !isLoading && lastPage > 1 && posts.length > 0 && (
 				<Pagination page={page} lastPage={lastPage} setPage={setPage} />
 			)}
 		</div>

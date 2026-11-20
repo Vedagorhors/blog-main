@@ -3,22 +3,35 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Icon } from '../../../../components';
 import { Comment } from './components';
-import { useServerRequest } from '../../../../hooks';
-import { selectUserId, selectUserRole } from '../../../../selectors';
+// import { useServerRequest } from '../../../../hooks';
+import { selectUserRole } from '../../../../selectors';
 import { addCommentAsync } from '../../../../actions';
 import { PROP_TYPE, ROLE } from '../../../../constants';
 import styled from 'styled-components';
 
 const CommentsContainer = ({ className, comments, postId }) => {
 	const [newComment, setNewComment] = useState('');
-	const userId = useSelector(selectUserId);
+	const [commentError, setCommentError] = useState(null);
+	const [isSaving, setIsSaving] = useState(false);
+	// const userId = useSelector(selectUserId);
 	const userRole = useSelector(selectUserRole);
 	const dispatch = useDispatch();
-	const requestServer = useServerRequest();
+	// const requestServer = useServerRequest();
 
-	const onNewCommentAdd = (userId, postId, content) => {
-		dispatch(addCommentAsync(requestServer, userId, postId, content));
-		setNewComment('');
+	// Интеграция фронтенда с бэкендом. Убираем везде requestServer и userId. userId автоматически определяется сервером.
+	const onNewCommentAdd = (postId, content) => {
+		// dispatch(addCommentAsync(requestServer, userId, postId, content));
+		if (isSaving) return;
+		setCommentError(null);
+		if (!content.trim()) {
+			setCommentError('Введите текст комментария');
+			return;
+		}
+		setIsSaving(true);
+		dispatch(addCommentAsync(postId, content))
+			.then(() => setNewComment((current) => current === content ? '' : current))
+			.catch((error) => setCommentError(error.message))
+			.finally(() => setIsSaving(false));
 	};
 
 	const isGuest = userRole === ROLE.GUEST;
@@ -38,10 +51,11 @@ const CommentsContainer = ({ className, comments, postId }) => {
 						id="fa-paper-plane-o"
 						margin="0 0 0 10px"
 						size="18px"
-						onClick={() => onNewCommentAdd(userId, postId, newComment)}
+						onClick={() => onNewCommentAdd(postId, newComment)}
 					/>
 				</div>
 			)}
+			{commentError && <div role="alert">Ошибка комментария: {commentError}</div>}
 			<div className="comments">
 				{comments.map(({ id, author, content, publishedAt }) => (
 					<Comment

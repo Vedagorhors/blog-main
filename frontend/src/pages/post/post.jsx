@@ -3,42 +3,47 @@ import { useMatch, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Comments, PostContent, PostForm } from './components';
 import { Error, PrivateContent } from '../../components';
-import { useServerRequest } from '../../hooks';
+// import { useServerRequest } from '../../hooks';
 import { loadPostAsync, RESET_POST_DATA } from '../../actions';
 import { selectPost } from '../../selectors';
 import { ROLE } from '../../constants';
 import styled from 'styled-components';
 
 const PostContainer = ({ className }) => {
-	const [error, setError] = useState(null);
+	const [loadResult, setLoadResult] = useState(null);
 	const dispatch = useDispatch();
 	const params = useParams();
 
-	const [isLoading, setIsLoading] = useState(true);
+	// Состояние загрузки привязано к id: при переходе между статьями старый ответ не виден.
+	const isLoading = !loadResult || loadResult.id !== params.id;
+	const error = isLoading ? null : loadResult.error;
 
 	const isCreating = useMatch('/post');
 
 	const isEditing = useMatch('/post/:id/edit');
 
-	const requestServer = useServerRequest();
+	// const requestServer = useServerRequest();
 	const post = useSelector(selectPost);
 
 	useLayoutEffect(() => {
 		dispatch(RESET_POST_DATA);
-	}, [dispatch, isCreating]);
+	}, [dispatch, isCreating, params.id]);
 
 	useEffect(() => {
 		if (isCreating) {
 			return;
 		}
-		dispatch(loadPostAsync(requestServer, params.id)).then((postData) => {
-			setError(postData.error);
-			setIsLoading(false);
-		});
-	}, [dispatch, requestServer, params.id, isCreating]);
+		// dispatch(loadPostAsync(requestServer, params.id)) — прежний вызов через bff.
+		let active = true;
+		dispatch(loadPostAsync(params.id, () => active))
+			.then(() => { if (active) setLoadResult({ id: params.id, error: null }); })
+			.catch((error) => { if (active) setLoadResult({ id: params.id, error: error.message }); });
+		return () => { active = false; };
+		// }, [dispatch, requestServer, params.id, isCreating]);
+	}, [dispatch, params.id, isCreating]);
 
 	if (isLoading && !isCreating) {
-		return null;
+		return <div role="status">Загрузка статьи...</div>;
 	}
 
 	const SpecificPostPage =
@@ -61,7 +66,7 @@ const PostContainer = ({ className }) => {
 			</div>
 		);
 
-	return error ? <Error error={error} /> : SpecificPostPage;
+	return !isCreating && error ? <Error error={error} /> : SpecificPostPage;
 };
 
 export const Post = styled(PostContainer)`

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Icon } from '../../../../components';
@@ -24,6 +25,7 @@ const UserName = styled.div`
 `;
 
 const ControlPanelContainer = ({ className }) => {
+	const [logoutError, setLogoutError] = useState(null);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const roleId = useSelector(selectUserRole);
@@ -31,8 +33,10 @@ const ControlPanelContainer = ({ className }) => {
 	// const session = useSelector(selectUserSession);
 
 	const onLogout = () => {
-		dispatch(logout());
-		sessionStorage.removeItem('userData');
+		setLogoutError(null);
+		dispatch(logout())
+			.then(() => sessionStorage.removeItem('userData'))
+			.catch((error) => setLogoutError(error.message));
 	};
 
 	const isAdmin = checkAccess([ROLE.ADMIN], roleId);
@@ -56,6 +60,7 @@ const ControlPanelContainer = ({ className }) => {
 					</>
 				)}
 			</RightAligned>
+			{logoutError && <div role="alert">Ошибка выхода: {logoutError}</div>}
 			<RightAligned>
 				{}
 				<Icon id="fa-backward" margin="10px 0 0 0" onClick={() => navigate(-1)} />

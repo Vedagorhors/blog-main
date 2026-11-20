@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 import { Icon } from '../../../../components';
 import { useState } from 'react';
 import { TableRow } from '../table-row/table-row';
-import { useServerRequest } from '../../../../hooks';
+// import { useServerRequest } from '../../../../hooks';
 import styled from 'styled-components';
 import { PROP_TYPE } from '../../../../constants';
+import { request } from '../../../../utils/request';
 
 const UserRowContainer = ({
 	className,
@@ -15,18 +16,26 @@ const UserRowContainer = ({
 	roles,
 	onUserRemove,
 }) => {
+	const [saveError, setSaveError] = useState(null);
 	const [initialRoleId, setInitialRoleId] = useState(userRoleId);
 	const [selectedRoleId, setSelectedRolId] = useState(userRoleId);
-	const requestServer = useServerRequest();
+	// const requestServer = useServerRequest();
 
 	const onRoleChange = ({ target }) => {
 		setSelectedRolId(Number(target.value));
 	};
 
+	// Интеграция фронтенда с бэкендом. Убираем requestServer
+
 	const onRoleSave = (userId, newUserRoleId) => {
-		requestServer('updateUserRole', userId, newUserRoleId).then(() => {
-			setInitialRoleId(newUserRoleId);
-		});
+		// request('updateUserRole', userId, newUserRoleId).then(() => {
+		setSaveError(null);
+		request(`/users/${userId}`, 'PATCH', { roleId: newUserRoleId })
+			.then(({ data }) => {
+				if (!data?.id) throw new Error('Сервер не вернул пользователя');
+				setInitialRoleId(data.roleId);
+			})
+			.catch((error) => setSaveError(error.message));
 	};
 
 	const isSaveButtonDisabled = selectedRoleId === initialRoleId;
@@ -34,6 +43,7 @@ const UserRowContainer = ({
 	return (
 		<div className={className}>
 			{}
+			{saveError && <div role="alert">Ошибка сохранения роли: {saveError}</div>}
 			<TableRow border={true}>
 				{}
 				<div className="login-column">{login}</div>

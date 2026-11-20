@@ -6,6 +6,7 @@ module.exports = function (user) {
     login: user.login,
     // роль пользователя храним в поле role
     roleId: user.role,
-    // registeredAt: user.createdAt
+    // registeredAt: user.createdAt — раньше поле было закомментировано.
+    registeredAt: user.createdAt,
   };
 };

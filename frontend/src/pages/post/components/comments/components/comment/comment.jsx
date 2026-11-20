@@ -1,23 +1,29 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Icon } from '../../../../../../components';
-import { useServerRequest } from '../../../../../../hooks';
+// import { useServerRequest } from '../../../../../../hooks';
 import { openModal, CLOSE_MODAL, removeCommentAsync } from '../../../../../../actions';
 import { selectUserRole } from '../../../../../../selectors';
 import { ROLE } from '../../../../../../constants';
 import styled from 'styled-components';
 
 const CommentContainer = ({ className, postId, id, author, publishedAt, content }) => {
+	const [removeError, setRemoveError] = useState(null);
 	const dispatch = useDispatch();
-	const requestServer = useServerRequest();
+	// const requestServer = useServerRequest();
 	const userRole = useSelector(selectUserRole);
 
+	// Интеграция фронтенда с бэкендом. Удаляем requestServer
 	const onCommentRemove = (id) => {
 		dispatch(
 			openModal({
 				text: 'Удалить комментарий?',
 				onConfirm: () => {
-					dispatch(removeCommentAsync(requestServer, postId, id));
+					// dispatch(removeCommentAsync(requestServer, postId, id));
+					setRemoveError(null);
+					dispatch(removeCommentAsync(postId, id))
+						.catch((error) => setRemoveError(error.message));
 					dispatch(CLOSE_MODAL);
 				},
 				onCancel: () => dispatch(CLOSE_MODAL),
@@ -29,6 +35,7 @@ const CommentContainer = ({ className, postId, id, author, publishedAt, content 
 
 	return (
 		<div className={className}>
+			{removeError && <div role="alert">Ошибка удаления: {removeError}</div>}
 			<div className="comment">
 				<div className="information-panel">
 					<div className="author">

@@ -23,6 +23,21 @@ app.use(express.json());
 // Все API-эндпоинты доступны с общим префиксом /api.
 app.use("/api", routes);
 
+// Express 5 передаёт сюда ошибки из async-обработчиков.
+// Всегда отвечаем JSON: фронтенд не должен пытаться разобрать HTML ошибки как данные.
+app.use("/api", (error, req, res, next) => {
+  if (res.headersSent) return next(error);
+  const status = error.name === "CastError" || error.name === "ValidationError"
+    ? 400
+    : error.code === 11000 ? 409 : (error.status || 500);
+  const message = status >= 500
+    ? "Внутренняя ошибка сервера"
+    : error.name === "CastError" ? "Некорректный идентификатор"
+    : error.name === "ValidationError" ? "Некорректные данные"
+    : error.code === 11000 ? "Такая запись уже существует" : error.message;
+  res.status(status).json({ error: message });
+});
+
 // Неизвестный API-адрес возвращает JSON с ошибкой, а не страницу React.
 // Этот обработчик должен стоять после API и перед раздачей фронтенда.
 app.use("/api", (req, res) => {

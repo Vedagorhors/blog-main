@@ -1,3 +1,6 @@
+// Учебный пример прежней работы с bff и json-server.
+// Хук больше не вызывается компонентами и не экспортируется из hooks/index.js.
+// Код оставлен для сравнения с новой утилитой utils/request.js.
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUserSession } from '../selectors';

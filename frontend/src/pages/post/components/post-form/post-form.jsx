@@ -3,7 +3,7 @@ import { Icon, Input } from '../../../../components';
 import { SpecialPanel } from '../special-panel/special-panel';
 import { savePostAsync } from '../../../../actions';
 import { sanitizeContent } from './utils';
-import { useServerRequest } from '../../../../hooks';
+// import { useServerRequest } from '../../../../hooks';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -15,25 +15,35 @@ const PostFormContainer = ({
 }) => {
 	const [imageUrlValue, setImageUrlValue] = useState(imageUrl);
 	const [titleValue, setTitleValue] = useState(title);
+	const [saveError, setSaveError] = useState(null);
 	const contentRef = useRef(null);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const requestServer = useServerRequest();
+	// const requestServer = useServerRequest();
 
 	const onImageChange = ({ target }) => setImageUrlValue(target.value);
 	const onTitleChange = ({ target }) => setTitleValue(target.value);
 
+	// Интеграция фронтенда с бэкендом. Убираем requestServer, то есть не будем передавать requestServer, а также иентификатор id, потому что он будет сформирован автоматически сервером.
 	const onSave = () => {
+		setSaveError(null);
 		const newContent = sanitizeContent(contentRef.current.innerHTML);
 		dispatch(
-			savePostAsync(requestServer, {
-				id,
+			// savePostAsync(requestServer, {
+			// у нас может быть id, а может и не быть, поэтому в savePostAsync передаем первым аргументом идентификатор id
+			savePostAsync(id, {
+				// id,
 				imageUrl: imageUrlValue,
 				title: titleValue,
 				content: newContent,
 			}),
-		).then(({ id }) => navigate(`/post/${id}`));
+		)
+			.then(({ id }) => navigate(`/post/${id}`))
+			// При ошибке остаёмся в форме и сохраняем введённый текст.
+			.catch((error) => {
+				setSaveError(error.message || 'Не удалось сохранить статью');
+			});
 	};
 
 	return (
@@ -69,6 +79,7 @@ const PostFormContainer = ({
 					/>
 				}
 			/>
+			{saveError && <div className="save-error" role="alert">Ошибка сохранения: {saveError}</div>}
 			{}
 			{}
 			<div
@@ -85,6 +96,11 @@ const PostFormContainer = ({
 };
 
 export const PostForm = styled(PostFormContainer)`
+	& .save-error {
+		color: #b00020;
+		margin: 10px 0;
+	}
+
 	& img {
 		float: left;
 		margin: 0 20px 10px 0;

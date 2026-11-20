@@ -1,2 +1,4 @@
 export * from './use-reset-form';
-export * from './use-server-request';
+// Старый хук для bff сохранён для обучения. Теперь запросы идут через utils/request.
+// Экспорт отключён, чтобы действующий фронтенд не подключал прежнюю реализацию.
+// export * from './use-server-request';

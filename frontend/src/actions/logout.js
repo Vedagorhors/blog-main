@@ -2,10 +2,10 @@ import { request } from '../utils/request';
 import { ACTION_TYPE } from './action-type';
 // import { server } from '../bff';
 
-export const logout = () => {
+export const logout = () => (dispatch) => {
 	// server.logout(session);
-	request('/logout', 'POST');
-	return {
-		type: ACTION_TYPE.LOGOUT,
-	};
+	// Меняем состояние только после подтверждения выхода сервером.
+	return request('/logout', 'POST').then(() => {
+		dispatch({ type: ACTION_TYPE.LOGOUT });
+	});
 };
