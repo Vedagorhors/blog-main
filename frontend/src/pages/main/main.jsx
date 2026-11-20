@@ -1,9 +1,10 @@
 import { Pagination, PostCard, Search } from './components';
 import { useEffect, useMemo, useState } from 'react';
-import { useServerRequest } from '../../hooks';
+// import { useServerRequest } from '../../hooks';
 import { PAGINATION_LIMIT } from '../../constants';
 import { debounce } from './utils/debounce';
 import styled from 'styled-components';
+import { request } from '../../utils/request';
 
 const MainContainer = ({ className }) => {
 	const [posts, setPosts] = useState([]);
@@ -11,17 +12,20 @@ const MainContainer = ({ className }) => {
 	const [lastPage, setLastPage] = useState(1);
 	const [searchPhrase, setSearchPhrase] = useState('');
 	const [shouldSearch, setShouldSearch] = useState(false);
-	const requestServer = useServerRequest();
+	// const requestServer = useServerRequest();
 	useEffect(() => {
-		requestServer('fetchPosts', searchPhrase, page, PAGINATION_LIMIT).then(
-			({ res: { posts, lastPage } }) => {
-				setPosts(posts);
+		// Интеграция фронтеда и бэкенда
+		// requestServer('fetchPosts', searchPhrase, page, PAGINATION_LIMIT).then(
+		request(
+			`/posts?search=${searchPhrase}&page=${page}&limit=${PAGINATION_LIMIT}`,
+		).then(({ data: { posts, lastPage } }) => {
+			setPosts(posts);
 
-				setLastPage(lastPage);
-			},
-		);
+			setLastPage(lastPage);
+		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [requestServer, page, shouldSearch]);
+	}, [page, shouldSearch]);
+	// 	}, [requestServer, page, shouldSearch]);
 
 	const startDelayedSearch = useMemo(() => debounce(setShouldSearch, 2000), []);
 
@@ -38,18 +42,16 @@ const MainContainer = ({ className }) => {
 				{}
 				{posts.length > 0 ? (
 					<div className="post-list">
-						{posts.map(
-							({ id, title, imageUrl, publishedAt, commentsCount }) => (
-								<PostCard
-									key={id}
-									id={id}
-									title={title}
-									imageUrl={imageUrl}
-									publishedAt={publishedAt}
-									commentsCount={commentsCount}
-								/>
-							),
-						)}
+						{posts.map(({ id, title, imageUrl, publishedAt, comments }) => (
+							<PostCard
+								key={id}
+								id={id}
+								title={title}
+								imageUrl={imageUrl}
+								publishedAt={publishedAt}
+								commentsCount={comments.length}
+							/>
+						))}
 					</div>
 				) : (
 					<div className="no-posts-found">Статьи не найдены</div>

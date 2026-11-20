@@ -4,13 +4,14 @@ import { Link, Navigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { server } from '../../bff';
+// import { server } from '../../bff';
 import { AuthFormError, Button, H2, Input } from '../../components';
 import { useResetForm } from '../../hooks';
 import { setUser } from '../../actions';
 import { selectUserRole } from '../../selectors';
 import { ROLE } from '../../constants';
 import styled from 'styled-components';
+import { request } from '../../utils/request';
 
 const authFormSchema = yup.object().shape({
 	login: yup
@@ -60,14 +61,29 @@ const AuthorizationContainer = ({ className }) => {
 	useResetForm(reset);
 
 	const onSubmit = ({ login, password }) => {
-		server.authorize(login, password).then(({ error, res }) => {
-			if (error) {
-				setServerError(`Ошибка запроса: ${error}`);
-				return;
-			}
-			dispatch(setUser(res));
-			sessionStorage.setItem('userData', JSON.stringify(res));
-		});
+		setServerError(null);
+		return request('/login', 'POST', { login, password })
+			.then(({ error, user }) => {
+				// Настоящий backend возвращает пользователя в user, а не в res.
+				if (error) {
+					setServerError(`Ошибка запроса: ${error}`);
+					return;
+				}
+				// Не сохраняем undefined или неполный ответ как вошедшего пользователя.
+				if (
+					!user?.id ||
+					typeof user.login !== 'string' ||
+					!user.login ||
+					![ROLE.ADMIN, ROLE.MODERATOR, ROLE.READER].includes(user.roleId)
+				) {
+					throw new Error('Сервер вернул некорректные данные пользователя');
+				}
+				sessionStorage.setItem('userData', JSON.stringify(user));
+				dispatch(setUser(user));
+			})
+			.catch((error) => {
+				setServerError(`Ошибка запроса: ${error.message}`);
+			});
 	};
 
 	const formError = errors?.login?.message || errors?.password?.message;
