@@ -1,5 +1,11 @@
 const express = require("express");
-const { getPost, getPosts, addPost, editPost, deletePost } = require("../controllers/post");
+const {
+  getPost,
+  getPosts,
+  addPost,
+  editPost,
+  deletePost,
+} = require("../controllers/post");
 const { addComment, deleteComment } = require("../controllers/comment");
 const authenticated = require("../middlewares/authenticated");
 const hasRole = require("../middlewares/hasRole");
@@ -27,7 +33,6 @@ router.get("/:id", async (req, res) => {
 
   res.send({ data: mapPost(post) });
 });
-
 
 // добавляем/подключаем контроллер комментариев. роли мы не контролируем, потому что любой залогиненный пользователь может оставлять комментарии.
 router.post("/:id/comments", authenticated, async (req, res) => {
@@ -70,26 +75,41 @@ router.post("/", authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
 });
 
 // редактирование
-router.patch("/:id", authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
-  const updatedPost = await editPost(
-    // первым аргументом необходимо передать id, а дальше идут поля, которые должны поменяться.
-    req.params.id,
-    {
-      title: req.body.title,
-      content: req.body.content,
-      image: req.body.imageUrl,
-    },
-  );
+router.patch(
+  "/:id",
+  authenticated,
+  hasRole([ROLES.ADMIN]),
+  async (req, res) => {
+    const updatedPost = await editPost(
+      // первым аргументом необходимо передать id, а дальше идут поля, которые должны поменяться.
+      req.params.id,
+      {
+        title: req.body.title,
+        content: req.body.content,
+        image: req.body.imageUrl,
+      },
+    );
 
-  // возвращаем данные. проверяем в Thunder Client
-  res.send({ data: mapPost(updatedPost) });
-});
+    // возвращаем данные. проверяем в Thunder Client
+    res.send({ data: mapPost(updatedPost) });
+  },
+);
 
 // Удаление
-router.delete("/:id", authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
-  await deletePost(req.params.id);
+router.delete(
+  "/:id",
+  authenticated,
+  hasRole([ROLES.ADMIN]),
+  async (req, res) => {
+    await deletePost(req.params.id);
 
-  res.send({ error: null });
-});
+    res.send({ error: null });
+  },
+);
 
 module.exports = router;
+
+// В начале файлов мы создали router с помощью express.Router({ mergeParams: true }) и использовали его вместо app для регистрации обработчиков.
+// Обработчикам, для использования которых необходим вход в аккаунт мы добавили middleware authenticated прямо после пути.
+// В конце каждого файла экспортировали router.
+// В файлах user.js и post.js все пути начинаются с / (без /posts или /users в начале). Мы доработаем этот момент в следующем шаге.

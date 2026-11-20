@@ -1,5 +1,10 @@
 const express = require("express");
-const { getUsers, getRoles, updateUser, deleteUser } = require("../controllers/user");
+const {
+  getUsers,
+  getRoles,
+  updateUser,
+  deleteUser,
+} = require("../controllers/user");
 const authenticated = require("../middlewares/authenticated");
 const hasRole = require("../middlewares/hasRole");
 const ROLES = require("../constants/roles");
@@ -19,31 +24,51 @@ router.get("/", authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
 // Итак нам возвращаются уже защищенные данные, без хэша пароля, тоесть содержат правильные поля нужные для фронтенда - смотрим это в расширении Thunder Client. Если нам нужно будет поменять представление пользователя во всем приложении, то достаточно будет это сделать в функции mapUser.
 
 // подключаем контроллер получения ролей
-router.get("/roles", authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
-  const roles = getRoles();
+router.get(
+  "/roles",
+  authenticated,
+  hasRole([ROLES.ADMIN]),
+  async (req, res) => {
+    const roles = getRoles();
 
-  res.send({ data: roles });
-});
+    res.send({ data: roles });
+  },
+);
 
 // контроллер редактирования пользователя
-router.patch("/:id", authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
-  const newUser = await updateUser(req.params.id, {
-    // и помним, что мы хотели давать возможность менять только роли, а это значит, что мы передаем объект, куда руками достаем только одно поле. Контроллер при этом поддерживает изменение любых полей. Это удобно, если мы захотим из каких-то других эндпоинтов или каким-то другим оббразом менять пользователя полностью. В пользователе (User.js) роль называется role, при этом фронтенд оперирует наименованием roleId
-    role: req.body.roleId,
-  });
-  // не забываем использовать mapUser
-  res.send({ data: mapUser(newUser) });
-});
+router.patch(
+  "/:id",
+  authenticated,
+  hasRole([ROLES.ADMIN]),
+  async (req, res) => {
+    const newUser = await updateUser(req.params.id, {
+      // и помним, что мы хотели давать возможность менять только роли, а это значит, что мы передаем объект, куда руками достаем только одно поле. Контроллер при этом поддерживает изменение любых полей. Это удобно, если мы захотим из каких-то других эндпоинтов или каким-то другим оббразом менять пользователя полностью. В пользователе (User.js) роль называется role, при этом фронтенд оперирует наименованием roleId
+      role: req.body.roleId,
+    });
+    // не забываем использовать mapUser
+    res.send({ data: mapUser(newUser) });
+  },
+);
 // проверим в Thunder Client, что этот эндпоинт работает. Видм что в пользователях у нас есть модератор с "roleId": 1. Сделаем его администратором "roleId": 0 - это сделаем в Thunder Client
 
 // Контроллер удаление пользователя
-router.delete("/:id", authenticated, hasRole([ROLES.ADMIN]), async (req, res) => {
-  await deleteUser(req.params.id);
+router.delete(
+  "/:id",
+  authenticated,
+  hasRole([ROLES.ADMIN]),
+  async (req, res) => {
+    await deleteUser(req.params.id);
 
-  res.send({ error: null });
-});
+    res.send({ error: null });
+  },
+);
 
 // проверяем в Thunder Client, что он работает. Удалили свежеиспеченного администратора.
 // Мы добавили все контроллеры, которые необходимы для работы с пользователем.
 
 module.exports = router;
+
+// В начале файлов мы создали router с помощью express.Router({ mergeParams: true }) и использовали его вместо app для регистрации обработчиков.
+// Обработчикам, для использования которых необходим вход в аккаунт мы добавили middleware authenticated прямо после пути.
+// В конце каждого файла экспортировали router.
+// В файлах user.js и post.js все пути начинаются с / (без /posts или /users в начале). Мы доработаем этот момент в следующем шаге.
