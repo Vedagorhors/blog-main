@@ -35,7 +35,10 @@ const ControlPanelContainer = ({ className }) => {
 	const onLogout = () => {
 		setLogoutError(null);
 		dispatch(logout())
-			.then(() => sessionStorage.removeItem('userData'))
+			.then(() => {
+				sessionStorage.removeItem('userData');
+				navigate('/');
+			})
 			.catch((error) => setLogoutError(error.message));
 	};
 
